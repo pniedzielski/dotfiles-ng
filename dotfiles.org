@@ -1,0 +1,191 @@
+#+TITLE:         pniedzielski's Dotfiles
+#+AUTHOR:        Patrick M. Niedzielski
+#+EMAIL:         patrick@pniedzielski.net
+#+DESCRIPTION:   Literate Dotfiles via Org-Mode
+
+* Introduction
+
+  This document represents the results of my crazy experiment to manage my [[https://dotfiles.github.io/][UNIX
+  dotfiles]] using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]] with [[http://orgmode.org/][Emacs Org mode]].  These dotfiles
+  contain all my personal system configuration that I'm willing to make public
+  (that is, that doesn't contain passwords or other sensitive information).  My
+  hope is that this setup will allow me to both easily migrate between machines
+  and keep track of /why/ my configuration is the way it is.
+
+** What?
+
+   [[http://literateprogramming.com/][Literate Programming]] is a programming methodology first described by Donald
+   Knuth in which the software developer maintains not a source file containing
+   documentation, but rather a prose explanation of the program that contains
+   bits of the source code.  The prose explanation can be /weaved/ into a
+   typeset document or /tangled/ into a source file.  The benefits of this, when
+   done properly, come primarily through ease of maintenance—the prose
+   explanation can explain the reasons for data structure and algorithm
+   selection and program organization in a way that even the best, most lucid
+   source code cannot.  In other words, true Literate Programming allows the
+   programmer to explain /why/, not just /what/ or /how/.
+
+   UNIX dotfiles are files that are generally stored within the user's ~$HOME~
+   directory that contain configuration for the user's software.  These files
+   are so-named because their filenames begin with a period, making them hidden
+   from most directory listings.
+
+   This file represents my attempt to maintain my dotfiles in a Literate
+   Programming way.
+
+** How?
+
+   In order to accomplish this, I'm using the same technique I used to manage my
+   Emacs configuration: Org mode, and in particular, [[http://orgmode.org/worg/org-contrib/babel/intro.html][Org Babel]].  Org Babel
+   piggybacks on the normal Org mode export functionality to weave
+   documentation, and adds functionality to tangle the configuration files.
+
+   In short,
+
+   - to *weave*, call ~org-export-dispatch~ (~C-c C-e~) and select the output
+     format, and
+   - to *tangle*, call ~org-babel-tangle~ (~C-c C-v t~).
+
+   Tangling this file will result in a directory structure usable with [[https://www.gnu.org/software/stow/][GNU Stow]].
+
+*** TODO Describe how to install the tangled configuration files with GNU Stow.
+
+** Why?
+
+   I've been maintaining my Emacs configuration through Literate Programming in
+   Org mode for a while now, and I've found it incredibly useful—although it
+   takes more work to properly maintain the configuration, the payout has been
+   extremely worthwhile.  Because I've maintained a prose description of why my
+   configuration is the way it is, and because I do not have to organize the
+   source blocks in the same order as they end up in the tangled configuration,
+   I can easily organize the Org file in such a way that all relevant blocks are
+   close together, thus minimizing any long-distance dependencies.  Where there
+   are long-distance dependencies, I can hyperlink between them, and thus make
+   sure that any changes I make do not result in a stale documentation.
+   Modifying this configuration is incredibly easy, especially compared to how
+   my configuration was before.
+
+   In contrast, my dotfiles have been just that: dotfiles.  For simple
+   configurations, anything more is overkill.  Recently, though, I've been
+   running up against my dotfiles themselves.  For example, to properly
+   configure [[*GnuPG][GPG]], I need to make sure that my [[*Shell][shell configuration]], [[*SSH][SSH
+   configuration]], and [[*Emacs][Emacs configuration]] are all in sync (not to mention making
+   sure the multiple GnuPG 2.1 configuration files aren't contradictory).  To
+   make it worse, lots of things depend on a properly configured GPG, and
+   sometimes in subtle ways.  I need to keep all these assumptions in mind when
+   I modify my GPG configuration, and that can affect the way I structure my GPG
+   configuration.  In particular, if I modify something incorrectly, I may (and
+   have) ended up with a machine that mysteriously wouldn't let me log in, or
+   wouldn't let me encrypt and decrypt files.  This is not something I enjoy
+   fixing, especially when I have other, more pressing things to be doing.
+
+   Furthermore, this complexity multiplies as soon as I try to support multiple
+   hosts with different software installed.  On my primary laptop, for instance,
+   I have X11 installed; I want [[*X11][X11 configuration]], and that means modifying my
+   [[*Shell][shell configuration files]].  On my server, though, I don't have (or want) X11
+   installed; I still want a lot of my [[*Shell][shell configuration]], though.  I could
+   maintain separate versions of the shell configuration, but that would been
+   keeping several almost-identical versions in sync, and that's certain to
+   result in problems down the line.
+
+   What if, though, I take the Literate Programming model I've been using to
+   maintain my Emacs configuration and apply it to UNIX dotfiles?  This allows
+   me to centralize all my configuration, describe why my configuration looks
+   the way it does, and specify parameters during the process of tangling that
+   allows me to generate different hosts' configurations, using different
+   subsets of the configuration in this file.  This doesn't work perfectly, but
+   it's a big step up from how it was before.
+
+   Putting this altogether, Literate Dotfiles allow me to solve the following
+   problems:
+
+   - I can explain exactly why my configuration is the way it is inline with the
+     actual configuration,
+
+   - I can group related configurations right next to each other in this Org
+     file, regardless of whether they are spread across multiple physical
+     configuration files for different software, and
+
+   - I can hyperlink between configurations that depend on one another when they
+     cannot or should not be grouped together in this Org file.
+
+   Literate Dotfiles is not a completely novel idea ([[https://github.com/howardabrams/dot-files][Howard Abrams' dotfiles]] and
+   [[http://keifer.link/projects/dotfiles/dotfiles.html][Keifer Miller's dotfiles]] are excellent prior art), but it is not a very
+   common idea, and many of the so-called “literate” dotfiles are merely blocks
+   of code organized by headers—something that I can already do with comments
+   and that does not warrant the added complexity of tangling the dotfiles in
+   Org mode.  In particular, and I write this mostly as a warning to myself, I
+   do not want my dotfiles to look like [[https://github.com/ivoarch/.dot-org-files][those in this repository]] or [[https://github.com/mgdelacroix/dotfiles][this
+   repository]].  It's easy to get fall into this trap, but there is nothing
+   “literate” about these, and I get almost nothing of the benefits I've
+   described above.
+
+** License
+
+   [[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotfiles are /not/ meant to be forked]], but I have no problem with anyone
+   taking inspiration from this configuration.  In particular, I hope that the
+   prose in this file will help point out pitfalls that you may not be aware of.
+   I'm not much a fan of copy-paste configuration, as it's just as great a way
+   of propagating problematic configuration as it is beneficial configuration.
+   I hope that the prose descriptions will help anyone looking through my
+   dotfiles.  I don't think Literate Dotfiles are the best for everyone, but it
+   does have the nice benefit of making dotfiles easy to understand.
+
+   [[http://i.creativecommons.org/p/zero/1.0/88x31.png]]
+
+   With that said, I do not want to place any restrictions on the use of the
+   tangled dotfiles or weaved documentation.  As such, to the extent possible
+   under law, I have waived all copyright and related or neighboring rights to
+   this work.  Please see the [[http://creativecommons.org/publicdomain/zero/1.0/][Creative Commons Zero 1.0]] license for details.
+
+** Considerations
+
+   I need to make some minimal assumptions about the systems I'm running on.
+   Nowadays, if I stick to GNU/Linux, I can assume [[https://wiki.freedesktop.org/www/Software/systemd/][Systemd]] is the init system.
+   Systemd has some very nice features, but the most relevant here is the
+   ability to run [[https://wiki.archlinux.org/index.php/Systemd/User][per-user Systemd instances]].  This allows me to manage certain
+   tasks that I might otherwise have needed to use cron or a ~$HOME/.bashrc~ for
+   in the same way I can manage system services, with all the same process
+   tracking benefits.  While this will make porting this dotfiles master file to
+   something like Mac OS X or FreeBSD more difficult, I think this is a
+   worthwhile price to pay for the moment, as I am almost exclusively using
+   GNU/Linux systems, and I can live without a lot of these when I'm on a
+   Macintosh or *BSD system.
+
+   On top of this, I have a few requirements of my own for my dotfiles:
+
+   1) We live in a sad world where dotfiles clutter the ~$HOME~ directory.  This
+      makes them hard to manage, hard to move, and hard to differentiate from
+      transient data or application save data.  Although the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base
+      Directories Specification]] aims to fix this by creating separate
+      directories for config (generally read-only), data (generally read-write),
+      and cache (safe to delete), there are many pieces of software that don't
+      follow it by default and have to be coddled into doing so using
+      environment or special command line flags.  This is unfortunate, but it's
+      more important to me to keep my ~$HOME~ directory as clean as I can.  Here
+      are some links that describe how to do this:
+      - Super User: [[https://superuser.com/questions/874901/what-are-the-step-to-move-all-your-dotfiles-into-xdg-directories][What are the step to move all your dotfiles into XDG
+        directories?]]
+      - [[https://github.com/grawity/dotfiles/blob/master/.dotfiles.notes][grawity Dotfile Notes]]
+      - [[https://lxl.io/xdg-config-home][Move your config files to ~$XDG_CONFIG_HOME~]] by Philipp Schmitt
+      - [[https://github.com/woegjiub/.config/blob/master/sh/xdg.sh][woegjiub ~xdg.sh~ script]]
+      - Arch Linux Forums [[https://wiki.archlinux.org/index.php/XDG_Base_Directory_support][XDG Base Directory support]]
+   2) Sometimes I install software under the ~$HOME/.local~ tree, so I want to
+      make sure the ~$PATH~ and all related variables will look in the right
+      place for binaries, manpages, headers, libraries, and so forth.
+
+* Shell
+
+* GnuPG
+
+* SSH
+
+* Mail
+
+* Git
+
+* X11
+
+* Backups
+
+* Emacs
