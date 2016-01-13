@@ -282,6 +282,115 @@
 
    We also [[*Emacs][define some aliases]] to easily start Emacs from the terminal.
 
+** Bash Prompt
+
+   In order to configure our Bash prompt, we make a new file,
+   ~$HOME/.config/sh/prompt.sh~.  This file's job is simply to set the prompt as
+   we want when it sourced.
+
+   Bash prompt configuration is contained within the ~$PS1~ environment
+   variable, which is extremely terse and hard to work with.  The following is
+   my ~$PS1~ configuration:
+
+   #+CAPTION: Source listing for ~.config/sh/prompt.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/prompt.sh   :noweb yes   :shebang "#!/bin/bash\n"
+     white='\e[0;37m'
+     greenbold='\e[01;32m'
+     bluebold='\e[01;34m'
+     reset='\e[0m'
+
+     export PS1="<<sh-prompt>>"
+
+     unset white
+     unset greenbold
+     unset bluebold
+     unset reset
+   #+END_SRC
+
+   This will produce a shell prompt that looks as follows:
+
+   #+BEGIN_EXAMPLE
+     hostname:~(0)$
+   #+END_EXAMPLE
+
+   The first few lines define ANSI color codes that we will use in the prompt.
+   Because these are unset later, we don't need to worry about them polluting
+   the our environment when we source this file.  When we use these color codes,
+   we will enclose them in ~\[~ and ~\]~, which tell bash not to consider the
+   enclosing text when moving the cursor.  We can use the variables within our
+   ~$PS1~ variable, and they will be interpolated correctly within the
+   double-quoted string.
+
+   Let's break the prompt down some:
+
+   - We start out by resetting the color setting of the terminal, just in case
+     some rogue command does not clean up after itself:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+       \[$reset\]
+     #+END_SRC
+
+   - The next part of the ~$PS1~ variable prints out the hostname (~\h~) in a
+     bold, green color, and then prints out a white colon:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+       \[$greenbold\]\h\[$reset\]\[$white\]:
+     #+END_SRC
+
+     In the past, I've also included the username (~\u~) before the hostname,
+     but except in specific cases (perhaps when logging in as root, which I tend
+     to disable), I don't really care about seeing it on every prompt.  On the
+     other hand, I often have multiple terminal windows open to multiple
+     different hosts, and I find it easy to get confused, so I always display
+     the hostname.
+
+   - The third part of the ~$PS1~ variable prints out the current working
+     directory in a bold, blue color:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+       \[$reset\]\[$bluebold\]\W
+     #+END_SRC
+
+     The ~\W~ command here only prints out the name of the working directory,
+     not the full path to it (this can be done using the ~\w~ command).  I want
+     my prompt to be relatively short, so I can fit the command on the same line
+     as the prompt, and when I want to know the full path, I can always use the
+     ~pwd~ command.
+
+   - Then, we print out the exit code of the last command run in parentheses, in
+     plain white:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+       \[$reset\]\[$white\](\$?)
+     #+END_SRC
+
+     The exit code of the last command run is contained within the ~$?~
+     variable.  I've found this functionality very useful, because I've run
+     across tricky commands that don't print out a useful message to ~stderr~ to
+     indicate that they've failed, but just die with some nonzero exit code.
+
+     Notice that we have to escape the dollar sign of the ~$?~, because
+     otherwise it would be expanded when we set the ~PS1~ variable initially,
+     not expanded each time the shell prompt is printed!
+
+   - The final part of the ~$PS1~ variable prints out the actual prompt, a
+     dollar sign and space, and resets the color state:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+       \\$ \[$reset\]
+     #+END_SRC
+
+     We need to double escape the dollar sign, because otherwise it would be
+     considered an environment variable expansion when printing the prompt.  We
+     really want a literal dollar sign here.
+
+   Concatenating these together will set our prompt as we want it.  Let's make
+   sure to source this from ~.bashrc~:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+     [ -r .config/sh/prompt.sh   ] && . .config/sh/prompt.sh
+   #+END_SRC
+
 * GnuPG
 
 * SSH
