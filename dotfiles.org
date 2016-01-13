@@ -247,6 +247,41 @@
      case "$-" in *i*) . .bashrc ;; esac
    #+END_SRC
 
+** Aliases
+
+   I store aliases in the ~$HOME/.config/sh/alias.sh~ file.  These aliases apply
+   only to interactive shells, not to scripts, so all these aliases are only to
+   help me in interactive shells.  Here is a full listing of that file:
+
+   #+CAPTION: Source listing for ~.config/sh/alias.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/alias.sh   :noweb yes   :shebang "#!/bin/sh\n"
+     <<sh-alias>>
+   #+END_SRC
+
+   We also want to make sure to source this file from ~.bashrc~:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+     [ -r .config/sh/alias.sh    ] && . .config/sh/alias.sh
+   #+END_SRC
+
+   The default ~ls~ does not automatically print its results in color when the
+   terminal supports it, and it gives rather unhelpful values for file sizes.
+   For usability, we change the default in interactive shells to use color
+   whenever the output terminal supports it and to display file sizes in
+   human-readable format (e.g., ~1K~, ~234M~, ~2G~).  Once we've done that, we
+   can also add the common and useful ~ll~ alias, which displays a long listing
+   format, sorted with directories first.
+
+   #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
+     # ls usability aliases
+   #+END_SRC
+   #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
+     alias ls="ls -h --color=auto"
+     alias ll="ls -lv --group-directories-first"
+   #+END_SRC
+
+   We also [[*Emacs][define some aliases]] to easily start Emacs from the terminal.
+
 * GnuPG
 
 * SSH
@@ -260,3 +295,26 @@
 * Backups
 
 * Emacs
+
+  Now, so we can easily connect to the Emacs server from an interactive
+  terminal, we define some shorthand shell aliases.  I can never remember the
+  command-line arguments to ~emacsclient~, and ~emacsclient~ itself is a pretty
+  hefty command name, so these aliases find a lot of use.  ~em~ opens its
+  argument in an existing frame, ~emnew~ opens its argument in a new frame, and
+  ~emtty~ opens its argument in the current terminal.
+
+  #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
+    # Emacsclient aliases
+  #+END_SRC
+  #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
+    alias em="emacsclient -n $@"
+    alias emnew="emacsclient -c -n $@"
+    alias emtty="emacsclient -t $@"
+  #+END_SRC
+
+  For each of these aliases, I used to have the ~--alternative-editor~ flag,
+  which I could use to set an editor to select if Emacs was not running.  There
+  is no case when that happens, and if there's some problem where Emacs is not
+  running, I'd like to be warned so I use ~vi~ explicitly and not get confused.
+
+** TODO Mention separate Emacs config file
