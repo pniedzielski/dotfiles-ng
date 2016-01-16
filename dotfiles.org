@@ -247,6 +247,147 @@
      case "$-" in *i*) . .bashrc ;; esac
    #+END_SRC
 
+** XDG Base Directories
+
+   The XDG Base Directory variables define where configuration, cache, and data
+   files for the user should be stored.  While this has the nice effect of
+   cleaning up the home directory, moving dotfiles into subdirectories
+   (something I like very much), it has an even more important benefit: because
+   it separates configuration files, cache files, and important data files into
+   separate folders, it greatly simplifies backup and recovery of these files.
+   Migrating to a new laptop, for instance, should be as simple as installing
+   the software and copying over the configuration and data.  With the typical
+   dotfiles approach, there's nothing that prevents cached data—data that isn't
+   essential and could potentially contain system-specific data that would not
+   transfer well—from being written straight to the home directory.  In essence,
+   this mirrors quite closely how UNIX systems break the file system into
+   directories that store configuration (~/etc~), cached data (~/var~), shared
+   data (~/usr/share~), and so forth.
+
+   Let's create a file ~$HOME/.config/sh/xdg.sh~ that, when sourced, sets these
+   variables correctly.  The full listing of this file is shown below:
+
+   #+CAPTION: Source listing for ~.config/sh/xdg.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/xdg.sh   :noweb yes   :shebang "#!/bin/sh\n"
+     <<sh-xdg>>
+   #+END_SRC
+
+   We also want this to be sourced by our ~.profile~, so we add the following
+   line there:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
+     [ -r .config/sh/xdg.sh ] && . .config/sh/xdg.sh
+   #+END_SRC
+
+   But what are the variables we need to configure?  The [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory
+   specification]] lists the following environment variables:
+
+   #+BEGIN_QUOTE
+     - There is a single base directory relative to which user-specific data
+       files should be written. This directory is defined by the environment
+       variable ~$XDG_DATA_HOME~.
+
+     - There is a single base directory relative to which user-specific
+       configuration files should be written. This directory is defined by the
+       environment variable ~$XDG_CONFIG_HOME~.
+
+     - There is a single base directory relative to which user-specific
+       executable files should be written. This directory is defined by the
+       environment variable ~$XDG_BIN_HOME~.
+
+     - There is a single base directory relative to which user-specific
+       architecture-independent library files shoule be written. This directory
+       is defined by the environment variable ~$XDG_LIB_HOME~.
+
+     - There is a set of preference ordered base directories relative to which
+       executable files should be searched. This set of directories is defined
+       by the environment variable ~$XDG_BIN_DIRS~.
+
+     - There is a set of preference ordered base directories relative to which
+       library files should be searched. This set of directories is defined by
+       the environment variable ~$XDG_LIB_DIRS~.
+
+     - There is a set of preference ordered base directories relative to which
+       data files should be searched. This set of directories is defined by the
+       environment variable ~$XDG_DATA_DIRS~.
+
+     - There is a set of preference ordered base directories relative to which
+       configuration files should be searched. This set of directories is
+       defined by the environment variable ~$XDG_CONFIG_DIRS~.
+
+     - There is a single base directory relative to which user-specific
+       non-essential (cached) data should be written. This directory is defined
+       by the environment variable ~$XDG_CACHE_HOME~.
+
+     - There is a single base directory relative to which user-specific runtime
+       files and other file objects should be placed. This directory is defined
+       by the environment variable ~$XDG_RUNTIME_DIR~.
+   #+END_QUOTE
+
+   The variables ~$XDG_BIN_DIRS~, ~$XDG_LIB_DIRS~, ~$XDG_DATA_DIRS~, and
+   ~$XDG_CONFIG_DIRS~ contain system paths, and they should be set by the system
+   (or applications should use the defaults defined in the specification).
+   Furthermore, [[http://www.freedesktop.org/software/systemd/man/pam_systemd.html][~$XDG_RUNTIME_DIR~ is set by the Systemd PAM module]], so we don't
+   need, or want, to set it by ourselves.
+
+   The remaining variables (namely, ~$XDG_DATA_HOME~, ~$XDG_CONFIG_HOME~,
+   ~$XDG_BIN_HOME~, ~$XDG_LIB_HOME~, and ~$XDG_CACHE_HOME~), though, should be
+   set in our shell configuration.  I use the following, which happen to be the
+   defaults anyway:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
+     # XDG Basedir variables
+   #+END_SRC
+   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n\n"
+     export XDG_DATA_HOME="$HOME/.local/share"
+     export XDG_CONFIG_HOME="$HOME/.config"
+     export XDG_BIN_HOME="$HOME/.local/bin"
+     export XDG_LIB_HOME="$HOME/.local/lib"
+     export XDG_CACHE_HOME="$HOME/.cache"
+   #+END_SRC
+
+   As a note, we have to be careful, as the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory Specification]]
+   requires us to use absolute paths.  Here, we do this by using double-quoting,
+   which interpolates the ~$HOME~ variable into the path for us.  Because
+   ~$HOME~ is an absolute path, the resulting paths will all be absolute, too.
+
+   The semantics of these environment variables naturally lead us to a backup
+   and recovery strategy:
+
+   - ~$XDG_DATA_HOME~ contains user-specific data, so we generally want to back
+     it up.  Not all of the data in this directory is important, but some is.
+     This may contain sensitive information, so we should encrypt our backups.
+
+   - ~$XDG_CONFIG_HOME~ contains user-specific configuration, which we want to
+     back up.  Hopefully, this contains no sensitive information, but I don't
+     trust that no passwords or secrets will make it into this, so we encrypt
+     the backups just in case.
+
+   - ~$XDG_BIN_HOME~ and ~$XDG_LIB_HOME~ are for user-installed software that
+     may be system-specific, so we don't want to back it up.  To recover, we
+     need to reinstall the software.
+
+   - ~$XDG_CACHE_HOME~ is non-essential data, files that store information
+     locally for performance.  These can be deleted at any time, and could go
+     out-of-date, so there is no point in backing them up.  Software that uses
+     these should regenerate them on its own.
+
+   While just configuring this should be enough, it's not.  There is an annoying
+   amount of software that does not use these directories properly, or at all.
+   We do our best here to configure the problematic software to use them, but we
+   can't get all of it.
+
+   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
+     # Per-software configuration to use XDG basedirs
+   #+END_SRC
+
+   TeX stores its cache right under the home directory by default, so we set the
+   following environment variable to move it to the cache directory:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n\n"
+     export TEXMFVAR="$XDG_CACHE_HOME/texmf-var"
+   #+END_SRC
+
 ** Aliases
 
    I store aliases in the ~$HOME/.config/sh/alias.sh~ file.  These aliases apply
