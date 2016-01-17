@@ -423,6 +423,91 @@
 
    We also [[*Emacs][define some aliases]] to easily start Emacs from the terminal.
 
+** Functions
+
+   In addition to aliases, I use some shell functions for functionality that is
+   more complicated than what aliases can provide but not complicated enough to
+   warrant a separate shell script.  These functions are stored in
+   ~$HOME/.config/sh/function.sh~, reproduced below:
+
+   #+CAPTION: Source listing for ~.config/sh/function.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/function.sh   :noweb yes   :shebang "#!/bin/sh\n"
+     <<sh-function>>
+   #+END_SRC
+
+   Again, we source it from ~.bashrc~:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+     [ -r .config/sh/function.sh ] && . .config/sh/function.sh
+   #+END_SRC
+
+   The functions I use most commonly manage my ~$PATH~ variable, the environment
+   variable that contains a colon-separated list of directories in which to look
+   for a command to be executed.  Modifying it manually—especially removing
+   directories from it—is tedious and error-prone; these functions, which I
+   found on [[https://stackoverflow.com/questions/370047/][a StackOverflow question]], have served we well:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-function   :noweb-sep "\n"   :exports none
+     # $PATH management functions
+   #+END_SRC
+   #+BEGIN_SRC sh   :noweb-ref sh-function   :noweb yes   :noweb-sep "\n\n"
+     path_append()  { path_remove $1; export PATH="$PATH:$1";   }
+     path_prepend() { path_remove $1; export PATH="$1:$PATH";   }
+     path_remove()  { export PATH=`<<sh-function-pathremove>>`; }
+   #+END_SRC
+
+   The ~path_append()~ and ~path_prepend()~ functions are rather
+   self-explanatory, but the ~path_remove()~ function may not be.  In fact, it's
+   slightly modified from the version in the StackOverflow question linked
+   above.  Let's break it down.  Our goal is to export the ~$PATH~ variable to a
+   new value, so let's look inside the backtick-quoted string to see what is
+   run:
+
+   1. First, we print out the current ~$PATH~, which we will use as input.  The
+      ~$PATH~ variable should not end in a newline, which gives us two options:
+
+      - ~echo -n~, which is not completely portable, or
+
+      - ~printf~.
+
+      In the name of portability, we will choose the later.
+
+      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+        printf '%s' "$PATH"
+      #+END_SRC
+
+   2. We want to parse this output into a series of records separated by colons.
+      To this, we turn to awk.  The awk [[http://www.grymoire.com/Unix/Awk.html#uh-19][~RS~ variable]] stores the line/record
+      separator used in parsing, and the [[http://www.grymoire.com/Unix/Awk.html#uh-20][~ORS~ variable]] stores the line/record
+      separator used in printing.  We can use these two variables to piggyback
+      on awk's parsing capabilities, setting both of them to colons.  Awk can
+      then loop over these parsed directory names to determine whether any of
+      them are the directory we are trying to remove.  If they are, we ignore
+      them.
+
+      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+        awk -v RS=: -v ORS=: '$0 != "'$1'"'
+      #+END_SRC
+
+      The expression here used to filter is a little opaque, but works as
+      follows:
+
+      - We have an initial, single-quoted string in which the ~$0~ is an _awk_
+        variable meaning "this record."  This string ends with a double quote.
+
+      - Then, we have a _shell_ variable that interpolates to the first argument
+        to our function.
+
+      - Finally, we have a third string that closes the opening quote from the
+        first string.
+
+   3. Unfortunately, awk outputs the value of ~ORS~ at the end of the string,
+      too, so we need to chop it off.  The following sed invocation does that:
+
+      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+        sed 's/:$//'
+      #+END_SRC
+
 ** Bash Prompt
 
    In order to configure our Bash prompt, we make a new file,
