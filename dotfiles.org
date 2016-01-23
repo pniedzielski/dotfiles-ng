@@ -384,7 +384,7 @@
    TeX stores its cache right under the home directory by default, so we set the
    following environment variable to move it to the cache directory:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n\n"
+   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
      export TEXMFVAR="$XDG_CACHE_HOME/texmf-var"
    #+END_SRC
 
@@ -817,6 +817,73 @@
     #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
       shopt -s checkwinsize
     #+END_SRC
+
+* Readline
+
+  [[https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html][GNU Readline]] is a library used by many programs for interactive command
+  editing and recall.  Most importantly for my purposes, it is used by Bash, so
+  this could be considered as an extension of our [[*Shell][shell configuration]].
+
+  Let's start off by moving the configuration to the correct XDG Basedir by
+  adding this to the ~xdg.sh~ script we detail in the [[*XDG Base Directories][XDG Basedirs section]].
+
+  #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
+    export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
+  #+END_SRC
+
+  The actual ~$XDG_CONFIG_HOME/readline/inputrc~ file is shown and described
+  below:
+
+  #+CAPTION: Source listing for ~.config/readline/inputrc~.
+  #+BEGIN_SRC conf   :tangle readline/.config/readline/inputrc   :noweb yes
+    <<inputrc>>
+  #+END_SRC
+
+  Our first configuration is to make ~TAB~ autocomplete regardless of the case
+  of the input.  This is somewhat of a trade-off, because it gives worse
+  completion when the case of a prefix really does disambiguate.  I find, in
+  practice, this is rather rare, and even rarer in my primary Readline
+  application, Bash.
+
+  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+    set completion-ignore-case on
+  #+END_SRC
+
+  I find the default behavior of Readline with regard to ambiguous completion to
+  be very annoying.  By default, Readline will beep at you when you attempt to
+  complete an ambiguous prefix and wait for you to press ~TAB~ again to see the
+  alternatives; if the completion is ambiguous, I want to be told of the
+  possible alternatives immediately.  Enabling the ~show-all-if-ambiguous~
+  setting accomplishes this.
+
+  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+    set show-all-if-ambiguous on
+  #+END_SRC
+
+  Another setting we want to make sure is set is to not autocomplete hidden
+  files unless the pattern explicitly begins with a dot.  Usually I don't want
+  to deal with hidden files, so this is a good trade-off.
+
+  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+    set match-hidden-files off
+  #+END_SRC
+
+  Also, we want to normalize the handling of directories and symlinks to
+  directories, so there appears to be no difference.  The following setting
+  immediately adds a trailing slash when autocompleting symlinks to
+  directories.
+
+  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+    set mark-symlinked-directories on
+  #+END_SRC
+
+  Finally, we add more intelligent ~UP~/~DOWN~ behavior, using the text that has
+  already been typed as the prefix for searching through command history.
+
+  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+    "\e[B": history-search-forward
+    "\e[A": history-search-backward
+  #+END_SRC
 
 * GnuPG
 
