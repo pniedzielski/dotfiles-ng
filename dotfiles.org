@@ -568,7 +568,14 @@
      bluebold='\e[01;34m'
      reset='\e[0m'
 
+     # Set prompt
      export PS1="<<sh-prompt>>"
+
+     # Set xterm title
+     case "$TERM" in
+         xterm*|rxvt*) export PS1="<<sh-prompt-title>>$PS1" ;;
+                    *) ;;
+     esac
 
      unset white
      unset greenbold
@@ -653,8 +660,56 @@
      considered an environment variable expansion when printing the prompt.  We
      really want a literal dollar sign here.
 
-   Concatenating these together will set our prompt as we want it.  Let's make
-   sure to source this from ~.bashrc~:
+   Concatenating these together will set our prompt as we want it.
+
+   After that, we want to make sure that xterms which are hosting our shell
+   session (potentially xterms on a different machine, that are connecting over
+   SSH) have a useful title.  Here, I elect to display the username as well as
+   the hostname and working directory.  Unlike in a shell prompt, changing the
+   title will not take up valuable screen real-estate, so this extra information
+   doesn't have much cost.  As long as the terminal is an xterm (which we check
+   by pattern matching), we prepend a string to the prompt which is displayed on
+   the title bar, but otherwise not shown.  The string has the following form:
+
+   #+BEGIN_SRC sh   :noweb yes
+     <<sh-prompt-title>>
+   #+END_SRC
+
+   Let's look at how this breaks down:
+
+   - We start with the same ~\[~ that we used earlier on to prevent Bash from
+     considering this text when moving the cursor:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+       \[
+     #+END_SRC
+
+     We will close this at the end of the title text.
+
+   - Then, we add the special escape sequence that an xterm detects to set the
+     title:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+       \e]0;
+     #+END_SRC
+
+   - Then, we set the title using the same escape sequences we used for the
+     prompt above, with the addition of a ~\u~, which expands to the current
+     user:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+       \u@\h: \W
+     #+END_SRC
+
+   - Finally, we tell the xterm that the title text is done and close the ~\[~
+     we opened earlier:
+
+     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+       \a\]
+     #+END_SRC
+
+   Now that we've set the prompt and xterm title, let's make sure to source this
+   configuration from ~.bashrc~:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
      [ -r .config/sh/prompt.sh   ] && . .config/sh/prompt.sh
