@@ -660,6 +660,109 @@
      [ -r .config/sh/prompt.sh   ] && . .config/sh/prompt.sh
    #+END_SRC
 
+** Miscellaneous Interactive Shell Customizations
+
+   Finally, we're left with some interactive shell customizations that don't fit
+   under any other heading.  These are either set in or conditionally sourced
+   from ~$HOME/.config/sh/interactive.sh~, which is listed below:
+
+   #+CAPTION: Source listing for ~.config/sh/interactive.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/interactive.sh   :noweb yes   :shebang "#!/bin/bash\n"
+     <<sh-interactive>>
+   #+END_SRC
+
+   As these are interactive, Bash-specific customizations, we want to source it
+   from our ~.bashrc~ by adding the following line to that file:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+     [ -r .config/sh/interactive.sh ] && . .config/sh/interactive.sh
+   #+END_SRC
+
+*** Bash Completion
+
+    To enable completion in Bash, we source one of two files:
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+      # Enable interactive Bash completion
+    #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+      if [ -r /usr/share/bash-completion/bash_completion ]; then
+          . /usr/share/bash-completion/bash_completion
+      elif [ -r /etc/bash_completion ]; then
+          . /etc/bash_completion
+      fi
+    #+END_SRC
+
+    This configuration is taken from the default ~.bashrc~ shipped with Debian;
+    the former path is the path that the ~bash-completion~ package installs to.
+    This can actually be modified [[https://www.gnu.org/software/bash/manual/html_node/Programmable-Completion.html][programmatically]] by packages.
+
+*** Bash History
+
+    Bash has command history support that allows you to recall previously run
+    commands and run them again at a later session.  Command history is stored
+    both in memory and in a special file written to disk, ~$HOME/.bash_history~.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+      # History configuration
+    #+END_SRC
+
+    I don't care so much about my command history being written to disk, because
+    my primary use case is to save on typing during an interactive session.
+    Because of this, we want to unset the ~$HISTFILE~ variable.  This will
+    prevent the command history from being written to disk when the shell is
+    exited.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
+      unset HISTFILE
+    #+END_SRC
+
+    When saving command history in memory, I want to prevent two things from
+    being added: lines beginning with whitespace (in case we have a reason to
+    run a command and not remember it) and duplicate lines (which are just a
+    nuisance to scroll through).  This can be done by setting the ~$HISTCONTROL~
+    environment variable to ~ignoreboth~.  We don't want this environment
+    variable to leak into subshells (especially noninteractive subshells), so we
+    don't ~export~ it.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
+      HISTCONTROL=ignoreboth
+    #+END_SRC
+
+    We also want to set a few shell options to control how history is stored as
+    well:
+
+    - ~cmdhist~ saves all lines in a multi-line command in the history file,
+      which makes it easy to modify multi-line commands that we've run.
+
+    - ~histreedit~ allows a user to re-edit a failed history substitution
+      instead of clearing the prompt.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+      shopt -s cmdhist
+      shopt -s histreedit
+    #+END_SRC
+
+*** Miscellaneous Configuration
+
+    Finally, we have the following configuration options that don't fit anywhere
+    else.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+      # Miscellaneous configuration items
+    #+END_SRC
+
+    We want to check the size of the terminal window after each command and, if
+    necessary, update the values of ~$LINES~ and ~$COLUMNS~.  If any command
+    uses the size of the terminal window to intelligently format output (think
+    ~ls~ selecting the number of columns to output filenames in), this will give
+    it up-to-date information on the terminal size.  The shell option
+    ~checkwinsize~ does this for us.
+
+    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+      shopt -s checkwinsize
+    #+END_SRC
+
 * GnuPG
 
 * SSH
