@@ -388,6 +388,49 @@
      export TEXMFVAR="$XDG_CACHE_HOME/texmf-var"
    #+END_SRC
 
+** Miscellaneous Environment Variables
+
+   The remaining environment variables are either set in or conditionally
+   sourced from ~$HOME/.config/sh/env.sh~.  A full listing of this file is shown
+   below:
+
+   #+CAPTION: Source listing for ~.config/sh/env.sh~.
+   #+BEGIN_SRC sh   :tangle sh/.config/sh/env.sh   :noweb yes   :shebang "#!/bin/sh\n"
+     <<sh-env>>
+   #+END_SRC
+
+   We want these environment variables to be available in all sessions, so we
+   want to source it from our ~.profile~, as well.  We add the following line
+   there to do that:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
+     [ -r .config/sh/env.sh ] && . .config/sh/env.sh
+   #+END_SRC
+
+*** Local Installation Tree
+
+   In addition to (or perhaps complementary to) the [[*XDG Base Directories][XDG Base Directories]], we
+   also use the ~.local~ tree as an install path for user-local software.
+   Because ~.local~ mirrors ~/usr~, this works very well.  It's not quite as
+   simple as adding the binary path to ~$PATH~, though.  There are a number of
+   variables we need to set for the software to work correctly.
+
+   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n" :exports none
+     # Add software installed under `~/.local` tree.
+   #+END_SRC
+   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+     LOCAL_PREFIX="$HOME/.local"
+     export PATH="$LOCAL_PREFIX/bin:$PATH"
+     export MANPATH="$LOCAL_PREFIX/share/man:$MANPATH"
+     export CFLAGS="-I$LOCAL_PREFIX/include $CFLAGS"
+     export CXXFLAGS="-I$LOCAL_PREFIX/include $CXXFLAGS"
+     export LDFLAGS="-L$LOCAL_PREFIX/lib -Wl,-rpath,$LOCAL_PREFIX/lib $LDFLAGS"
+     export LD_RUNPATH="$LOCAL_PREFIX/lib:$LD_RUNPATH"
+     export PKG_CONFIG_PATH="$LOCAL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+     export ACLOCAL_FLAGS="-I $LOCAL_PREFIX/share/aclocal/"
+     unset LOCAL_PREFIX
+   #+END_SRC
+
 ** Aliases
 
    I store aliases in the ~$HOME/.config/sh/alias.sh~ file.  These aliases apply
@@ -626,6 +669,21 @@
 * Git
 
 * X11
+** Fcitx
+
+   I use [[https://fcitx-im.org/][Fcitx]] as an input method to allow me to type non-Latin characters.  To
+   set this up, we have to export several environment variables:
+
+   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
+     # Set up FCITX.
+   #+END_SRC
+   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+     export XIM_PROGRAM=fcitx
+     export XIM=fcitx
+     export GTK_IM_MODULE=fcitx
+     export QT_IM_MODULE=fcitx
+     export XMODIFIERS="@im=fcitx"
+   #+END_SRC
 
 * Backups
 
@@ -651,5 +709,22 @@
   which I could use to set an editor to select if Emacs was not running.  There
   is no case when that happens, and if there's some problem where Emacs is not
   running, I'd like to be warned so I use ~vi~ explicitly and not get confused.
+
+  Finally, we set Emacs as our default editor for the session.  We want the
+  behavior to be "open a new buffer for the existing Emacs session.  If that
+  session does not exist, open Emacs in daemon mode and then open a terminal
+  frame connection to it."  Setting ~$VISUAL~ and ~$EDITOR~ to ~emacsclient~
+  accomplishes the first part, and setting ~$ALTERNATIVE_EDITOR~ to an empty
+  string accomplishes the second part, as described in the article [[http://stuff-things.net/2014/12/16/working-with-emacsclient/][_Working with
+  EmacsClient_]].
+
+  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
+    # Use emacsclient as the editor.
+  #+END_SRC
+  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+    export EDITOR="emacsclient"
+    export VISUAL="emacsclient"
+    export ALTERNATIVE_EDITOR=""
+  #+END_SRC
 
 ** TODO Mention separate Emacs config file
