@@ -3,6 +3,8 @@
 #+EMAIL:         patrick@pniedzielski.net
 #+DESCRIPTION:   Literate Dotfiles via Org-Mode
 
+#+PROPERTY: header-args :comments no :mkdirp yes
+
 * Introduction
 
   This document represents the results of my crazy experiment to manage my [[https://dotfiles.github.io/][UNIX
@@ -175,6 +177,75 @@
       place for binaries, manpages, headers, libraries, and so forth.
 
 * Shell
+
+  The UNIX shell is at the center of the UNIX CLI experience, so it makes sense
+  to begin with this.  There are two particular shells I care about: Bash and
+  standard POSIX shell.  The former is what I use for interactive shells outside
+  of Emacs, whereas the latter is what I strive to write my scripts for (so,
+  among other things, they support *BSDs and other UNIXen without modification).
+  This configuration is structured so that I can configure both—although I keep
+  POSIX shell completely vanilla with regard to its functionality, so I don't
+  get any unexpected surprises when moving my scripts to a new host.
+
+  On Debian systems, the POSIX shell is [[http://gondor.apana.org.au/~herbert/dash/][Dash, the Debian Almquist Shell]], by
+  default.  This shell is POSIX compliant and very lightweight.  Other systems
+  use [[https://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html][Bash as the POSIX shell]], which, as long its configured correctly, is also
+  fine.
+
+  To orient readers, my shell configuration is similar to that described in the
+  article [[https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789#.a9jfn51ix][_Getting Started With Dotfiles_]], by Lars Kappert.
+
+** Shell Configuration Files
+
+   Shell configuration is done in three files, whose semantics are described
+   below:
+
+   - ~.profile~ :: This file is sourced by a login shell, which is the root
+        process of almost everything run by the user (with the exception of
+        Systemd units and cron jobs, which are run from a daemon not spawned
+        from the login shell).  Because all shells, not just Bash, source this
+        file, we want to avoid anything Bash-specific here.
+
+   - ~.bashrc~ :: This file is sourced by interactive Bash shells *that are not
+        login shells*, so it should contain only configuration that we use while
+        interacting with a shell (as opposed to, for example, configuration that
+        might affect shell scripts).  These are mostly conveniences, and are
+        necessarily Bash-specific.
+
+   - ~.bash_profile~ :: This file is sourced by Bash in priority to ~.profile~
+        for login shells, but is otherwise the same.
+
+   The above descriptions lead to the following plan: we will use ~.profile~ for
+   one-time configuration for each login, such as environment variables that are
+   needed by every program; ~.bashrc~ will contain Bash-specific configuration
+   that is sourced by every new interactive shell (things like aliases and
+   functions, which aren't inherited by subshells anyway); ~.bash_profile~ will
+   simply source both ~.profile~ and ~.bashrc~, which means interactive Bash
+   login shells will have both the non-Bash-specific configurations and the
+   Bash-specific configurations.
+
+   So, let's take a look at these three configuration files:
+
+   #+CAPTION: Source listing for ~.profile~.
+   #+BEGIN_SRC sh   :tangle sh/.profile   :noweb yes   :shebang "#!/bin/sh\n"
+     # Source installed login shell configurations:
+     <<sh-profile>>
+   #+END_SRC
+
+   #+CAPTION: Source listing for ~.bashrc~.
+   #+BEGIN_SRC sh   :tangle sh/.bashrc   :noweb yes   :shebang "#!/bin/bash\n"
+     # Source installed interactive shell configurations:
+     <<sh-bashrc>>
+   #+END_SRC
+
+   #+CAPTION: Source listing for ~.bash_profile~.
+   #+BEGIN_SRC sh   :tangle sh/.bash_profile   :noweb yes   :shebang "#!/bin/bash\n"
+     # Source login shell configuration:
+     . .profile
+
+     # Only source .bashrc when shell is interactive:
+     case "$-" in *i*) . .bashrc ;; esac
+   #+END_SRC
 
 * GnuPG
 
