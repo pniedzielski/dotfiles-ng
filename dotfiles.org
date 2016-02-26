@@ -48,9 +48,25 @@
      format, and
    - to *tangle*, call ~org-babel-tangle~ (~C-c C-v t~).
 
-   Tangling this file will result in a directory structure usable with [[https://www.gnu.org/software/stow/][GNU Stow]].
+   Tangling this file will result in a directory structure usable with [[https://www.gnu.org/software/stow/][GNU
+   Stow]].  To install Stow, you will want to install the `stow` package or
+   equivalent; the command to do so for Debian is show below:
 
-*** TODO Describe how to install the tangled configuration files with GNU Stow.
+   #+BEGIN_SRC sh   :dir /sudo:localhost:/
+   apt-get install stow
+   #+END_SRC
+
+   Once this file has been tangled, you can pick the functionality you need on
+   the system using Stow.  To install some set of functionality using Stow, run
+   the following command from the root directory of this file
+
+   #+BEGIN_SRC sh
+     stow -t ~ -S feature1 feature2 feature3 …
+   #+END_SRC
+
+   where each of ~feature1~, ~feature2~, and so on are directories created from
+   tangling this file.  This command will install symbolic links to the tangled
+   files under your home directory as needed.
 
 ** Why?
 
@@ -953,3 +969,8 @@
   #+END_SRC
 
 ** TODO Mention separate Emacs config file
+
+# Local Variables:
+# mode: org
+# fill-column: 80
+# End:
