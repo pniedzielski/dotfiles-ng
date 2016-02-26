@@ -292,7 +292,7 @@
    line there:
 
    #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
-     [ -r .config/sh/xdg.sh ] && . .config/sh/xdg.sh
+     [ -r $HOME/.config/sh/xdg.sh ] && . $HOME/.config/sh/xdg.sh
    #+END_SRC
 
    But what are the variables we need to configure?  The [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory
@@ -420,7 +420,7 @@
    there to do that:
 
    #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
-     [ -r .config/sh/env.sh ] && . .config/sh/env.sh
+     [ -r $HOME/.config/sh/env.sh ] && . $HOME/.config/sh/env.sh
    #+END_SRC
 
 *** Local Installation Tree
@@ -461,7 +461,7 @@
    We also want to make sure to source this file from ~.bashrc~:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r .config/sh/alias.sh    ] && . .config/sh/alias.sh
+     [ -r $HOME/.config/sh/alias.sh    ] && . $HOME/.config/sh/alias.sh
    #+END_SRC
 
    The default ~ls~ does not automatically print its results in color when the
@@ -497,7 +497,7 @@
    Again, we source it from ~.bashrc~:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r .config/sh/function.sh ] && . .config/sh/function.sh
+     [ -r $HOME/.config/sh/function.sh ] && . $HOME/.config/sh/function.sh
    #+END_SRC
 
    The functions I use most commonly manage my ~$PATH~ variable, the environment
@@ -728,7 +728,7 @@
    configuration from ~.bashrc~:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r .config/sh/prompt.sh   ] && . .config/sh/prompt.sh
+     [ -r $HOME/.config/sh/prompt.sh   ] && . $HOME/.config/sh/prompt.sh
    #+END_SRC
 
 ** Miscellaneous Interactive Shell Customizations
@@ -746,7 +746,7 @@
    from our ~.bashrc~ by adding the following line to that file:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r .config/sh/interactive.sh ] && . .config/sh/interactive.sh
+     [ -r $HOME/.config/sh/interactive.sh ] && . $HOME/.config/sh/interactive.sh
    #+END_SRC
 
 *** Bash Completion
