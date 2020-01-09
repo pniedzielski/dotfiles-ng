@@ -1,4 +1,4 @@
-#+TITLE:         pniedzielski's Dotfiles
+#+TITLE:         pniedzielski’s Dotfiles
 #+AUTHOR:        Patrick M. Niedzielski
 #+EMAIL:         patrick@pniedzielski.net
 #+DESCRIPTION:   Literate Dotfiles via Org-Mode
@@ -9,8 +9,8 @@
 
   This document represents the results of my crazy experiment to manage my [[https://dotfiles.github.io/][UNIX
   dotfiles]] using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]] with [[http://orgmode.org/][Emacs Org mode]].  These dotfiles
-  contain all my personal system configuration that I'm willing to make public
-  (that is, that doesn't contain passwords or other sensitive information).  My
+  contain all my personal system configuration that I’m willing to make public
+  (that is, that doesn’t contain passwords or other sensitive information).  My
   hope is that this setup will allow me to both easily migrate between machines
   and keep track of /why/ my configuration is the way it is.
 
@@ -27,8 +27,8 @@
    source code cannot.  In other words, true Literate Programming allows the
    programmer to explain /why/, not just /what/ or /how/.
 
-   UNIX dotfiles are files that are generally stored within the user's ~$HOME~
-   directory that contain configuration for the user's software.  These files
+   UNIX dotfiles are files that are generally stored within the user’s ~$HOME~
+   directory that contain configuration for the user’s software.  These files
    are so-named because their filenames begin with a period, making them hidden
    from most directory listings.
 
@@ -37,7 +37,7 @@
 
 ** How?
 
-   In order to accomplish this, I'm using the same technique I used to manage my
+   In order to accomplish this, I’m using the same technique I used to manage my
    Emacs configuration: Org mode, and in particular, [[http://orgmode.org/worg/org-contrib/babel/intro.html][Org Babel]].  Org Babel
    piggybacks on the normal Org mode export functionality to weave
    documentation, and adds functionality to tangle the configuration files.
@@ -70,10 +70,10 @@
 
 ** Why?
 
-   I've been maintaining my Emacs configuration through Literate Programming in
-   Org mode for a while now, and I've found it incredibly useful—although it
+   I’ve been maintaining my Emacs configuration through Literate Programming in
+   Org mode for a while now, and I’ve found it incredibly useful—although it
    takes more work to properly maintain the configuration, the payout has been
-   extremely worthwhile.  Because I've maintained a prose description of why my
+   extremely worthwhile.  Because I’ve maintained a prose description of why my
    configuration is the way it is, and because I do not have to organize the
    source blocks in the same order as they end up in the tangled configuration,
    I can easily organize the Org file in such a way that all relevant blocks are
@@ -84,35 +84,35 @@
    my configuration was before.
 
    In contrast, my dotfiles have been just that: dotfiles.  For simple
-   configurations, anything more is overkill.  Recently, though, I've been
+   configurations, anything more is overkill.  Recently, though, I’ve been
    running up against my dotfiles themselves.  For example, to properly
    configure [[*GnuPG][GPG]], I need to make sure that my [[*Shell][shell configuration]], [[*SSH][SSH
    configuration]], and [[*Emacs][Emacs configuration]] are all in sync (not to mention making
-   sure the multiple GnuPG 2.1 configuration files aren't contradictory).  To
+   sure the multiple GnuPG 2.1 configuration files aren’t contradictory).  To
    make it worse, lots of things depend on a properly configured GPG, and
    sometimes in subtle ways.  I need to keep all these assumptions in mind when
    I modify my GPG configuration, and that can affect the way I structure my GPG
    configuration.  In particular, if I modify something incorrectly, I may (and
-   have) ended up with a machine that mysteriously wouldn't let me log in, or
-   wouldn't let me encrypt and decrypt files.  This is not something I enjoy
+   have) ended up with a machine that mysteriously wouldn’t let me log in, or
+   wouldn’t let me encrypt and decrypt files.  This is not something I enjoy
    fixing, especially when I have other, more pressing things to be doing.
 
    Furthermore, this complexity multiplies as soon as I try to support multiple
    hosts with different software installed.  On my primary laptop, for instance,
    I have X11 installed; I want [[*X11][X11 configuration]], and that means modifying my
-   [[*Shell][shell configuration files]].  On my server, though, I don't have (or want) X11
+   [[*Shell][shell configuration files]].  On my server, though, I don’t have (or want) X11
    installed; I still want a lot of my [[*Shell][shell configuration]], though.  I could
    maintain separate versions of the shell configuration, but that would been
-   keeping several almost-identical versions in sync, and that's certain to
+   keeping several almost-identical versions in sync, and that’s certain to
    result in problems down the line.
 
-   What if, though, I take the Literate Programming model I've been using to
+   What if, though, I take the Literate Programming model I’ve been using to
    maintain my Emacs configuration and apply it to UNIX dotfiles?  This allows
    me to centralize all my configuration, describe why my configuration looks
    the way it does, and specify parameters during the process of tangling that
-   allows me to generate different hosts' configurations, using different
-   subsets of the configuration in this file.  This doesn't work perfectly, but
-   it's a big step up from how it was before.
+   allows me to generate different hosts’ configurations, using different
+   subsets of the configuration in this file.  This doesn’t work perfectly, but
+   it’s a big step up from how it was before.
 
    Putting this altogether, Literate Dotfiles allow me to solve the following
    problems:
@@ -127,15 +127,15 @@
    - I can hyperlink between configurations that depend on one another when they
      cannot or should not be grouped together in this Org file.
 
-   Literate Dotfiles is not a completely novel idea ([[https://github.com/howardabrams/dot-files][Howard Abrams' dotfiles]] and
-   [[http://keifer.link/projects/dotfiles/dotfiles.html][Keifer Miller's dotfiles]] are excellent prior art), but it is not a very
+   Literate Dotfiles is not a completely novel idea ([[https://github.com/howardabrams/dot-files][Howard Abrams’ dotfiles]] and
+   [[http://keifer.link/projects/dotfiles/dotfiles.html][Keifer Miller’s dotfiles]] are excellent prior art), but it is not a very
    common idea, and many of the so-called “literate” dotfiles are merely blocks
    of code organized by headers—something that I can already do with comments
    and that does not warrant the added complexity of tangling the dotfiles in
    Org mode.  In particular, and I write this mostly as a warning to myself, I
    do not want my dotfiles to look like [[https://github.com/ivoarch/.dot-org-files][those in this repository]] or [[https://github.com/mgdelacroix/dotfiles][this
-   repository]].  It's easy to get fall into this trap, but there is nothing
-   “literate” about these, and I get almost nothing of the benefits I've
+   repository]].  It’s easy to get fall into this trap, but there is nothing
+   “literate” about these, and I get almost nothing of the benefits I’ve
    described above.
 
 ** License
@@ -143,10 +143,10 @@
    [[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotfiles are /not/ meant to be forked]], but I have no problem with anyone
    taking inspiration from this configuration.  In particular, I hope that the
    prose in this file will help point out pitfalls that you may not be aware of.
-   I'm not much a fan of copy-paste configuration, as it's just as great a way
+   I’m not much a fan of copy-paste configuration, as it’s just as great a way
    of propagating problematic configuration as it is beneficial configuration.
    I hope that the prose descriptions will help anyone looking through my
-   dotfiles.  I don't think Literate Dotfiles are the best for everyone, but it
+   dotfiles.  I don’t think Literate Dotfiles are the best for everyone, but it
    does have the nice benefit of making dotfiles easy to understand.
 
    [[http://i.creativecommons.org/p/zero/1.0/88x31.png]]
@@ -158,7 +158,7 @@
 
 ** Considerations
 
-   I need to make some minimal assumptions about the systems I'm running on.
+   I need to make some minimal assumptions about the systems I’m running on.
    Nowadays, if I stick to GNU/Linux, I can assume [[https://wiki.freedesktop.org/www/Software/systemd/][Systemd]] is the init system.
    Systemd has some very nice features, but the most relevant here is the
    ability to run [[https://wiki.archlinux.org/index.php/Systemd/User][per-user Systemd instances]].  This allows me to manage certain
@@ -167,19 +167,19 @@
    tracking benefits.  While this will make porting this dotfiles master file to
    something like Mac OS X or FreeBSD more difficult, I think this is a
    worthwhile price to pay for the moment, as I am almost exclusively using
-   GNU/Linux systems, and I can live without a lot of these when I'm on a
+   GNU/Linux systems, and I can live without a lot of these when I’m on a
    Macintosh or *BSD system.
 
    On top of this, I have a few requirements of my own for my dotfiles:
 
-   1) We live in a sad world where dotfiles clutter the ~$HOME~ directory.  This
+   1. We live in a sad world where dotfiles clutter the ~$HOME~ directory.  This
       makes them hard to manage, hard to move, and hard to differentiate from
       transient data or application save data.  Although the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base
       Directories Specification]] aims to fix this by creating separate
       directories for config (generally read-only), data (generally read-write),
-      and cache (safe to delete), there are many pieces of software that don't
+      and cache (safe to delete), there are many pieces of software that don’t
       follow it by default and have to be coddled into doing so using
-      environment or special command line flags.  This is unfortunate, but it's
+      environment or special command line flags.  This is unfortunate, but it’s
       more important to me to keep my ~$HOME~ directory as clean as I can.  Here
       are some links that describe how to do this:
       - Super User: [[https://superuser.com/questions/874901/what-are-the-step-to-move-all-your-dotfiles-into-xdg-directories][What are the step to move all your dotfiles into XDG
@@ -188,7 +188,7 @@
       - [[https://lxl.io/xdg-config-home][Move your config files to ~$XDG_CONFIG_HOME~]] by Philipp Schmitt
       - [[https://github.com/woegjiub/.config/blob/master/sh/xdg.sh][woegjiub ~xdg.sh~ script]]
       - Arch Linux Forums [[https://wiki.archlinux.org/index.php/XDG_Base_Directory_support][XDG Base Directory support]]
-   2) Sometimes I install software under the ~$HOME/.local~ tree, so I want to
+   2. Sometimes I install software under the ~$HOME/.local~ tree, so I want to
       make sure the ~$PATH~ and all related variables will look in the right
       place for binaries, manpages, headers, libraries, and so forth.
 
@@ -200,7 +200,7 @@
   of Emacs, whereas the latter is what I strive to write my scripts for (so,
   among other things, they support *BSDs and other UNIXen without modification).
   This configuration is structured so that I can configure both—although I keep
-  POSIX shell completely vanilla with regard to its functionality, so I don't
+  POSIX shell completely vanilla with regard to its functionality, so I don’t
   get any unexpected surprises when moving my scripts to a new host.
 
   On Debian systems, the POSIX shell is [[http://gondor.apana.org.au/~herbert/dash/][Dash, the Debian Almquist Shell]], by
@@ -235,12 +235,12 @@
    one-time configuration for each login, such as environment variables that are
    needed by every program; ~.bashrc~ will contain Bash-specific configuration
    that is sourced by every new interactive shell (things like aliases and
-   functions, which aren't inherited by subshells anyway); ~.bash_profile~ will
+   functions, which aren’t inherited by subshells anyway); ~.bash_profile~ will
    simply source both ~.profile~ and ~.bashrc~, which means interactive Bash
    login shells will have both the non-Bash-specific configurations and the
    Bash-specific configurations.
 
-   So, let's take a look at these three configuration files:
+   So, let’s take a look at these three configuration files:
 
    #+CAPTION: Source listing for ~.profile~.
    #+BEGIN_SRC sh   :tangle sh/.profile   :noweb yes   :shebang "#!/bin/sh\n"
@@ -273,14 +273,14 @@
    separate folders, it greatly simplifies backup and recovery of these files.
    Migrating to a new laptop, for instance, should be as simple as installing
    the software and copying over the configuration and data.  With the typical
-   dotfiles approach, there's nothing that prevents cached data—data that isn't
+   dotfiles approach, there’s nothing that prevents cached data—data that isn’t
    essential and could potentially contain system-specific data that would not
    transfer well—from being written straight to the home directory.  In essence,
    this mirrors quite closely how UNIX systems break the file system into
    directories that store configuration (~/etc~), cached data (~/var~), shared
    data (~/usr/share~), and so forth.
 
-   Let's create a file ~$HOME/.config/sh/xdg.sh~ that, when sourced, sets these
+   Let’s create a file ~$HOME/.config/sh/xdg.sh~ that, when sourced, sets these
    variables correctly.  The full listing of this file is shown below:
 
    #+CAPTION: Source listing for ~.config/sh/xdg.sh~.
@@ -343,7 +343,7 @@
    The variables ~$XDG_BIN_DIRS~, ~$XDG_LIB_DIRS~, ~$XDG_DATA_DIRS~, and
    ~$XDG_CONFIG_DIRS~ contain system paths, and they should be set by the system
    (or applications should use the defaults defined in the specification).
-   Furthermore, [[http://www.freedesktop.org/software/systemd/man/pam_systemd.html][~$XDG_RUNTIME_DIR~ is set by the Systemd PAM module]], so we don't
+   Furthermore, [[http://www.freedesktop.org/software/systemd/man/pam_systemd.html][~$XDG_RUNTIME_DIR~ is set by the Systemd PAM module]], so we don’t
    need, or want, to set it by ourselves.
 
    The remaining variables (namely, ~$XDG_DATA_HOME~, ~$XDG_CONFIG_HOME~,
@@ -375,12 +375,12 @@
      This may contain sensitive information, so we should encrypt our backups.
 
    - ~$XDG_CONFIG_HOME~ contains user-specific configuration, which we want to
-     back up.  Hopefully, this contains no sensitive information, but I don't
+     back up.  Hopefully, this contains no sensitive information, but I don’t
      trust that no passwords or secrets will make it into this, so we encrypt
      the backups just in case.
 
    - ~$XDG_BIN_HOME~ and ~$XDG_LIB_HOME~ are for user-installed software that
-     may be system-specific, so we don't want to back it up.  To recover, we
+     may be system-specific, so we don’t want to back it up.  To recover, we
      need to reinstall the software.
 
    - ~$XDG_CACHE_HOME~ is non-essential data, files that store information
@@ -388,10 +388,10 @@
      out-of-date, so there is no point in backing them up.  Software that uses
      these should regenerate them on its own.
 
-   While just configuring this should be enough, it's not.  There is an annoying
+   While just configuring this should be enough, it’s not.  There is an annoying
    amount of software that does not use these directories properly, or at all.
    We do our best here to configure the problematic software to use them, but we
-   can't get all of it.
+   can’t get all of it.
 
    #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
      # Per-software configuration to use XDG basedirs
@@ -427,7 +427,7 @@
 
    In addition to (or perhaps complementary to) the [[*XDG Base Directories][XDG Base Directories]], we
    also use the ~.local~ tree as an install path for user-local software.
-   Because ~.local~ mirrors ~/usr~, this works very well.  It's not quite as
+   Because ~.local~ mirrors ~/usr~, this works very well.  It’s not quite as
    simple as adding the binary path to ~$PATH~, though.  There are a number of
    variables we need to set for the software to work correctly.
 
@@ -468,7 +468,7 @@
    terminal supports it, and it gives rather unhelpful values for file sizes.
    For usability, we change the default in interactive shells to use color
    whenever the output terminal supports it and to display file sizes in
-   human-readable format (e.g., ~1K~, ~234M~, ~2G~).  Once we've done that, we
+   human-readable format (e.g., ~1K~, ~234M~, ~2G~).  Once we’ve done that, we
    can also add the common and useful ~ll~ alias, which displays a long listing
    format, sorted with directories first.
 
@@ -516,17 +516,16 @@
    #+END_SRC
 
    The ~path_append()~ and ~path_prepend()~ functions are rather
-   self-explanatory, but the ~path_remove()~ function may not be.  In fact, it's
+   self-explanatory, but the ~path_remove()~ function may not be.  In fact, it’s
    slightly modified from the version in the StackOverflow question linked
-   above.  Let's break it down.  Our goal is to export the ~$PATH~ variable to a
-   new value, so let's look inside the backtick-quoted string to see what is
+   above.  Let’s break it down.  Our goal is to export the ~$PATH~ variable to a
+   new value, so let’s look inside the backtick-quoted string to see what is
    run:
 
    1. First, we print out the current ~$PATH~, which we will use as input.  The
       ~$PATH~ variable should not end in a newline, which gives us two options:
 
       - ~echo -n~, which is not completely portable, or
-
       - ~printf~.
 
       In the name of portability, we will choose the later.
@@ -539,7 +538,7 @@
       To this, we turn to awk.  The awk [[http://www.grymoire.com/Unix/Awk.html#uh-19][~RS~ variable]] stores the line/record
       separator used in parsing, and the [[http://www.grymoire.com/Unix/Awk.html#uh-20][~ORS~ variable]] stores the line/record
       separator used in printing.  We can use these two variables to piggyback
-      on awk's parsing capabilities, setting both of them to colons.  Awk can
+      on awk’s parsing capabilities, setting both of them to colons.  Awk can
       then loop over these parsed directory names to determine whether any of
       them are the directory we are trying to remove.  If they are, we ignore
       them.
@@ -552,7 +551,7 @@
       follows:
 
       - We have an initial, single-quoted string in which the ~$0~ is an _awk_
-        variable meaning "this record."  This string ends with a double quote.
+        variable meaning “this record”.  This string ends with a double quote.
 
       - Then, we have a _shell_ variable that interpolates to the first argument
         to our function.
@@ -570,7 +569,7 @@
 ** Bash Prompt
 
    In order to configure our Bash prompt, we make a new file,
-   ~$HOME/.config/sh/prompt.sh~.  This file's job is simply to set the prompt as
+   ~$HOME/.config/sh/prompt.sh~.  This file’s job is simply to set the prompt as
    we want when it sourced.
 
    Bash prompt configuration is contained within the ~$PS1~ environment
@@ -606,14 +605,14 @@
    #+END_EXAMPLE
 
    The first few lines define ANSI color codes that we will use in the prompt.
-   Because these are unset later, we don't need to worry about them polluting
+   Because these are unset later, we don’t need to worry about them polluting
    the our environment when we source this file.  When we use these color codes,
    we will enclose them in ~\[~ and ~\]~, which tell bash not to consider the
    enclosing text when moving the cursor.  We can use the variables within our
    ~$PS1~ variable, and they will be interpolated correctly within the
    double-quoted string.
 
-   Let's break the prompt down some:
+   Let’s break the prompt down some:
 
    - We start out by resetting the color setting of the terminal, just in case
      some rogue command does not clean up after itself:
@@ -629,9 +628,9 @@
        \[$greenbold\]\h\[$reset\]\[$white\]:
      #+END_SRC
 
-     In the past, I've also included the username (~\u~) before the hostname,
+     In the past, I’ve also included the username (~\u~) before the hostname,
      but except in specific cases (perhaps when logging in as root, which I tend
-     to disable), I don't really care about seeing it on every prompt.  On the
+     to disable), I don’t really care about seeing it on every prompt.  On the
      other hand, I often have multiple terminal windows open to multiple
      different hosts, and I find it easy to get confused, so I always display
      the hostname.
@@ -657,9 +656,9 @@
      #+END_SRC
 
      The exit code of the last command run is contained within the ~$?~
-     variable.  I've found this functionality very useful, because I've run
-     across tricky commands that don't print out a useful message to ~stderr~ to
-     indicate that they've failed, but just die with some nonzero exit code.
+     variable.  I’ve found this functionality very useful, because I’ve run
+     across tricky commands that don’t print out a useful message to ~stderr~ to
+     indicate that they’ve failed, but just die with some nonzero exit code.
 
      Notice that we have to escape the dollar sign of the ~$?~, because
      otherwise it would be expanded when we set the ~PS1~ variable initially,
@@ -683,7 +682,7 @@
    SSH) have a useful title.  Here, I elect to display the username as well as
    the hostname and working directory.  Unlike in a shell prompt, changing the
    title will not take up valuable screen real-estate, so this extra information
-   doesn't have much cost.  As long as the terminal is an xterm (which we check
+   doesn’t have much cost.  As long as the terminal is an xterm (which we check
    by pattern matching), we prepend a string to the prompt which is displayed on
    the title bar, but otherwise not shown.  The string has the following form:
 
@@ -691,7 +690,7 @@
      <<sh-prompt-title>>
    #+END_SRC
 
-   Let's look at how this breaks down:
+   Let’s look at how this breaks down:
 
    - We start with the same ~\[~ that we used earlier on to prevent Bash from
      considering this text when moving the cursor:
@@ -724,7 +723,7 @@
        \a\]
      #+END_SRC
 
-   Now that we've set the prompt and xterm title, let's make sure to source this
+   Now that we’ve set the prompt and xterm title, let’s make sure to source this
    configuration from ~.bashrc~:
 
    #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
@@ -733,7 +732,7 @@
 
 ** Miscellaneous Interactive Shell Customizations
 
-   Finally, we're left with some interactive shell customizations that don't fit
+   Finally, we’re left with some interactive shell customizations that don’t fit
    under any other heading.  These are either set in or conditionally sourced
    from ~$HOME/.config/sh/interactive.sh~, which is listed below:
 
@@ -778,7 +777,7 @@
       # History configuration
     #+END_SRC
 
-    I don't care so much about my command history being written to disk, because
+    I don’t care so much about my command history being written to disk, because
     my primary use case is to save on typing during an interactive session.
     Because of this, we want to unset the ~$HISTFILE~ variable.  This will
     prevent the command history from being written to disk when the shell is
@@ -792,9 +791,9 @@
     being added: lines beginning with whitespace (in case we have a reason to
     run a command and not remember it) and duplicate lines (which are just a
     nuisance to scroll through).  This can be done by setting the ~$HISTCONTROL~
-    environment variable to ~ignoreboth~.  We don't want this environment
+    environment variable to ~ignoreboth~.  We don’t want this environment
     variable to leak into subshells (especially noninteractive subshells), so we
-    don't ~export~ it.
+    don’t ~export~ it.
 
     #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
       HISTCONTROL=ignoreboth
@@ -804,7 +803,7 @@
     well:
 
     - ~cmdhist~ saves all lines in a multi-line command in the history file,
-      which makes it easy to modify multi-line commands that we've run.
+      which makes it easy to modify multi-line commands that we’ve run.
 
     - ~histreedit~ allows a user to re-edit a failed history substitution
       instead of clearing the prompt.
@@ -816,7 +815,7 @@
 
 *** Miscellaneous Configuration
 
-    Finally, we have the following configuration options that don't fit anywhere
+    Finally, we have the following configuration options that don’t fit anywhere
     else.
 
     #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
@@ -840,7 +839,7 @@
   editing and recall.  Most importantly for my purposes, it is used by Bash, so
   this could be considered as an extension of our [[*Shell][shell configuration]].
 
-  Let's start off by moving the configuration to the correct XDG Basedir by
+  Let’s start off by moving the configuration to the correct XDG Basedir by
   adding this to the ~xdg.sh~ script we detail in the [[*XDG Base Directories][XDG Basedirs section]].
 
   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
@@ -877,7 +876,7 @@
   #+END_SRC
 
   Another setting we want to make sure is set is to not autocomplete hidden
-  files unless the pattern explicitly begins with a dot.  Usually I don't want
+  files unless the pattern explicitly begins with a dot.  Usually I don’t want
   to deal with hidden files, so this is a good trade-off.
 
   #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
@@ -948,8 +947,8 @@
 
   For each of these aliases, I used to have the ~--alternative-editor~ flag,
   which I could use to set an editor to select if Emacs was not running.  There
-  is no case when that happens, and if there's some problem where Emacs is not
-  running, I'd like to be warned so I use ~vi~ explicitly and not get confused.
+  is no case when that happens, and if there’s some problem where Emacs is not
+  running, I’d like to be warned so I use ~vi~ explicitly and not get confused.
 
   Finally, we set Emacs as our default editor for the session.  We want the
   behavior to be "open a new buffer for the existing Emacs session.  If that
