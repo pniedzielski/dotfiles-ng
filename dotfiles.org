@@ -901,6 +901,9 @@
   #+END_SRC
 
 * GnuPG
+  #+begin_src shell   :noweb-ref sh-xdg   :noweb-sep "\n"
+     export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+  #+end_src
 
 * SSH
   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
