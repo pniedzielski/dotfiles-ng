@@ -52,8 +52,8 @@
    Stow]].  To install Stow, you will want to install the `stow` package or
    equivalent; the command to do so for Debian is show below:
 
-   #+BEGIN_SRC sh   :dir /sudo:localhost:/
-   apt-get install stow
+   #+BEGIN_SRC shell   :dir /sudo::
+     DEBIAN_FRONTEND=noninteractive apt-get install stow
    #+END_SRC
 
    Once this file has been tangled, you can pick the functionality you need on
