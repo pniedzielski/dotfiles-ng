@@ -1117,7 +1117,7 @@
 
       [new]
       tags=new
-      ignore=*.json;.mbsyncstate;.uidvalidity;.msyncstate.journal;.mbsyncstate.new
+      ignore=.credentials.gmailieer.json;.gmailieer.json;.state.gmailieer.json;.state.gmailieer.json.bak;.gmailieer.json.bak;.lock;.mbsyncstate;.uidvalidity;.msyncstate.journal;.mbsyncstate.new
 
       [search]
       exclude_tags=deleted;spam
