@@ -903,7 +903,10 @@
 * GnuPG
 
 * SSH
-
+  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+    export SSH_AGENT_PID=
+    export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+  #+END_SRC
 * Mail
 
 * Git
