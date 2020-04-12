@@ -908,6 +908,621 @@
     export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
   #+END_SRC
 * Mail
+  My current email setup is probably the biggest improvement I have ever made
+  for my productivity.  I have, in the past, used [[https://wiki.gnome.org/Apps/Evolution][GNOME Evolution]] for email,
+  which I find to be a really nice program.  However, it started to balk at the
+  number of emails I had.  Sometimes, its database would become corrupted, and I
+  would have to download all my mails again.  Furthermore, as I started using
+  Emacs [[http://orgmode.org/][Org Mode]] to manage my schedule and notes, I was finding I was only using
+  Evolution for mail.  Naturally, I started looking for a more stable and
+  Emacs-compatible solution.
+
+  There were some important considerations I had when researching a mail setup:
+
+  1. I want to be able to work offline, and that includes reading (and even
+     sending) mail!  Sometimes this is born of necessity, such as when I'm on a
+     plane or a bus; sometimes it is self-imposed.  When I get back online, I
+     want the mail I've queued up to be sent to be actually propagated to a
+     server, and all the mail that I've received in the meantime to be
+     accessible.  Note that this necessitates both a copy of all mail locally on
+     my machine and a sent mail queue.
+
+  2. I have a lot of email, and managing it all manually is a big chore.  I want
+     to be able to search for mail quickly and easily, and I want this to be my
+     primary means of using email.
+
+  3. I don't want to be roped into any specific tools.  Whenever possible, I
+     want to be using common, open standards.  For one, this adds some
+     redundancy to the system, which is a really good thing for such an
+     important tool—that is, if one part of the system breaks somehow, it
+     doesn't bring down everything else, and I can still potentially work.
+     Furthermore, this means I can easily swap parts of the system out.  I've
+     done this in the past, swapping [[http://www.djcbsoftware.nl/code/mu/][mu]] for [[https://notmuchmail.org/][notmuch]] and [[http://www.offlineimap.org/][OfflineIMAP]] for [[http://isync.sourceforge.net/][isync]].
+     In the future, I may look at [[http://imapfw.offlineimap.org/][imapfw]], which is by the same author as
+     OfflineIMAP—it just doesn’t look stable enough at the moment.
+
+  I switched through some setups, eventually settling on my current setup, which
+  centers around the following loosely-coupled tools:
+
+  - [[http://isync.sourceforge.net/][isync]] :: a tool for synchronizing a local Maildir with an IMAP server.
+       Because isync only connects to the server intermittently to sync a local
+       copy with a remote copy, it means I don’t have to have an internet
+       connection at all times to read my mail, satisfying consideration 1
+       above.  Compared to the alternative in the same space, [[http://www.offlineimap.org/][OfflineIMAP]], I’ve
+       found isync very fast, even with all the mail I have; this satisfies
+       condition 2.  Finally, isync only uses the IMAP4 protocol and the
+       widely-used Maildir format, meaning I’m not locked into it if I want to
+       switch or do something novel with my email, satisfying condition 3.
+
+  - [[https://github.com/gauteh/lieer][lieer]] :: a tool for synchronizing a local notmuch Maildir with Gmail tags.
+
+  - [[http://msmtp.sourceforge.net/][msmtp]] :: a sendmail-compatible tool for sending emails through a remote SMTP
+       server.  Packaged with it in the Debian archive is a nice script called
+       =msmtpq=, which, if we can’t send mail to the remote server (if, for
+       instance, we’re not connected to the network), queues the mail locally to
+       be sent later.  In doing so, it satisfies my first criterion above, and
+       since it’s an SMTP tool, it satisfies criterion 3 as well.  Fortunately,
+       I don’t send all that much mail, so it’s not important for this to scale
+       to a large number of messages—although, it might.
+
+  - [[https://notmuchmail.org/][notmuch]] :: a Maildir indexer, which provides lightning fast tagging and
+       searching for email messages.  The search-based paradigm for email is how
+       email /should/ be, as it takes so little maintenance.  notmuch only needs
+       a local copy of your email (condition 1), uses a Xapian database and puts
+       it in your Maildir (condition 3), and is incredibly fast (even faster
+       than its competitor, [[http://www.djcbsoftware.nl/code/mu/][mu]], which I used for some time), and able to cope
+       with very, very large amounts of email (condition 2).
+
+  All of these tools combine together to make an incredibly efficient email
+  workflow.  To set each of these tools up, though, we need to do some
+  preliminary work.
+
+  Let’s create a directory to store our emails first:
+
+  #+begin_src shell
+    mkdir -p ~/Retpoŝtoj
+  #+end_src
+
+** General Configuration
+   This section describes general configuration of each of the components of the
+   setup.  The next section gives the configuration for each account I use.
+
+*** Retrieving Mail with isync
+    As described above, the tool we will use to sync mail to and from our IMAP
+    servers is [[http://isync.sourceforge.net/][isync]], a fast IMAP and Maildir synchronization program written in
+    C.  To get started, we need to make sure we have the =isync= package
+    installed.  Let's install it:
+
+    #+begin_src shell   :dir /sudo::
+      DEBIAN_FRONTEND=noninteractive apt-get install isync
+    #+end_src
+
+    Configuration of isync is not too hard, but there are some caveats.  As we
+    discussed in the [[*XDG Base Directories][XDG Basedirs section]], our ideal is to move all
+    configuration files out of our home directory.  Our usual tool for doing
+    this is by setting an environment variable.  isync does not support an
+    environment variable like this, though.  Fortunately, its =mbsync=
+    executable does support a command line flag telling it where to look for its
+    configuration file.  As long as we only use isync with this flag, we'll be
+    fine (and we'll make sure of this later).  However, this means we can place
+    our configuration in a ~$XDG_CONFIG_HOME/isync/config~ file, shown below:
+
+    #+caption: Source listing for ~.config/isync/config~.
+    #+begin_src conf   :tangle mail/.config/isync/config   :noweb yes
+      # -*- conf -*-
+
+      <<mail-isync>>
+    #+end_src
+
+    Before diving into this file, let’s take some time to understand the basic
+    concepts of isync.  Isync essentially deals with mappings between two
+    backing stores of email; these mappings are called /channels/.  A channel
+    has a /master/ store (usually the authoritative copy) and a /slave/ store
+    (usually a replica).  Each of these stores can either be a mailbox stored in
+    a local Maildir or a mailbox stored in a remote server, accessible over
+    IMAP.  Finally, for IMAP stores, we need to also set up information about
+    the IMAP connection, called an /IMAP account/.
+
+*** Sending Mail with msmtp
+    We don’t just want to receive mail locally, though; we also want to send it.
+    To do this, we will use [[https://marlam.de/msmtp/][msmtp]], a sendmail-like process that communicates
+    with external SMTP servers.  The msmtp package also contains an
+    implementation of a local mail queue, which I need for sending mail when
+    offline.  So, first let’s install the =msmtp= package from Debian.
+
+    #+begin_src shell   :dir /sudo::
+      DEBIAN_FRONTEND=noninteractive apt-get install msmtp
+    #+end_src
+
+    The mail queue scripts are installed along with documentation, along with a
+    very useful [[file:/usr/share/doc/msmtp/examples/msmtpq/README.msmtpq][README file]].  As described there, the queue scripts are a
+    wrapper for msmtp itself, and so these scripts are what we will be using for
+    our MTA.  We need to copy them to our =PATH= and make sure they are
+    executable.
+
+    #+begin_src shell
+      mkdir -p ~/.local/bin
+      cp /usr/share/doc/msmtp/examples/msmtpq/msmtp-queue ~/.local/bin/
+      cp /usr/share/doc/msmtp/examples/msmtpq/msmtpq      ~/.local/bin/
+      chmod +x ~/.local/bin/msmtp-queue ~/.local/bin/msmtpq
+    #+end_src
+
+    Next, we need to tell these scripts where to place the queue.  I think the
+    proper place for this is is in a subdirectory of =$XDG_DATA_HOME=, so the
+    queue is persistent between boots (just in case!).  Let’s create that
+    directory.
+
+    #+begin_src shell
+      mkdir -p   $XDG_DATA_HOME/msmtp/queue
+      chmod 0700 $XDG_DATA_HOME/msmtp/queue
+    #+end_src
+
+    Next, we need to modify the =msmtpq= script to use this directory.  We do
+    this by rewriting two configuration lines near the top of the script:
+
+    #+begin_src sed   :cmd-line -i   :in-file ~/.local/bin/msmtpq
+      s|Q=~/.msmtp.queue|Q=\$XDG_DATA_HOME/msmtp/queue|;
+      s|LOG=~/log/msmtp.queue.log|LOG=\$XDG_DATA_HOME/msmtp/queue.log|;
+    #+end_src
+
+    Now, we can just use the local =msmtpq= program as our MTA!
+
+    Configuring =msmtp=, like =isync= is fairly simple.
+
+    #+caption: Source listing for ~$XDG_CONFIG_HOME/msmtp/config~.
+    #+begin_src conf   :tangle mail/.config/msmtp/config   :noweb yes
+      # -*- conf -*-
+      # Set default values for all following accounts.
+      defaults
+      auth   on
+      tls    on
+      syslog on
+
+      <<mail-msmtp>>
+
+
+      # Set a default account
+      account default : personal
+    #+end_src
+
+*** Searching Mail
+    In order to index and search our mail, we use [[https://notmuchmail.org/][notmuch]].  Let’s first install
+    this from the Debian archive:
+
+    #+begin_src shell   :dir /sudo::
+      DEBIAN_FRONTEND=noninteractive apt-get install notmuch
+    #+end_src
+
+    Note that we don’t want to install notmuch-emacs, because it pulls in
+    emacs24.  We use 25, so instead we will pull from MELPA.
+
+    By default, notmuch looks for a configuration file directly under the user’s
+    home.  We can configure this using an environment variable, though, so we
+    can hide this away within the XDG configuration directory.
+
+    #+begin_src shell   :noweb-ref sh-xdg   :noweb-sep "\n"
+      export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/config"
+    #+end_src
+
+    Speaking of the configuration file, let’s take a look at it:
+
+    #+begin_src conf   :tangle mail/.config/notmuch/config   :noweb yes
+      [database]
+      path=/home/pniedzielski/Retpoŝtoj
+
+      [user]
+      name=Patrick M. Niedzielski
+      primary_email=patrick@pniedzielski.net
+      other_email=pnski@mit.edu;PatrickNiedzielski@gmail.com;pmn25@cornell.edu;pniedzielski@andover.edu;
+
+      [new]
+      tags=new
+      ignore=*.json;.mbsyncstate;.uidvalidity;.msyncstate.journal;.mbsyncstate.new
+
+      [search]
+      exclude_tags=deleted;spam
+
+      [maildir]
+      synchronize_flags=true
+
+      [crypto]
+      gpg_path=gpg
+    #+end_src
+
+*** Automating
+    #+caption: Source listing for ~.local/bin/pn-mail-sync~.
+    #+begin_src shell   :tangle mail/.local/bin/pn-mail-sync   :noweb yes   :shebang "#!/bin/sh"
+      msmtp-queue -r
+
+      (echo -n "Sync Personal…" && mbsync -c ~/.config/isync/config personal     && echo "Done!") || echo "Error!"
+      (echo -n "Sync MIT…"      && mbsync -c ~/.config/isync/config mit          && echo "Done!") || echo "Error!"
+      (echo -n "Sync Gmail…"    && cd ~/Retpoŝtoj/gmail   && gmi sync >/dev/null && echo "Done!") || echo "Error!"
+      (echo -n "Sync Cornell…"  && cd ~/Retpoŝtoj/cornell && gmi sync >/dev/null && echo "Done!") || echo "Error!"
+
+      notmuch new
+
+      notmuch tag +account/personal -- is:new and path:personal/**
+      notmuch tag +account/mit      -- is:new and path:mit/**
+      notmuch tag +account/gmail    -- is:new and path:gmail/**
+      notmuch tag +account/cornell  -- is:new and path:cornell/**
+
+      notmuch tag +to-me -- is:new and to:patrick@pniedzielski.net
+      notmuch tag +to-me -- is:new and to:pnski@mit.edu
+      notmuch tag +to-me -- is:new and to:PatrickNiedzielski@gmail.com
+      notmuch tag +to-me -- is:new and to:pmn25@cornell.edu
+
+      notmuch tag +sent -- is:new and from:patrick@pniedzielski.net
+      notmuch tag +sent -- is:new and from:pnski@mit.edu
+      notmuch tag +sent -- is:new and from:PatrickNiedzielski@gmail.com
+      notmuch tag +sent -- is:new and from:pmn25@cornell.edu
+
+      notmuch tag +feeds -- is:new and to:feed2imap@pniedzielski.net
+
+      notmuch tag +lists +lists/boston-pm                -- is:new and to:Boston-pm@mail.pm.org
+      notmuch tag +lists +lists/LINGUIST-L               -- is:new and list:linguist.listserv.linguistlist.org
+      notmuch tag +lists +lists/CONLANG-L                -- is:new and to:CONLANG@listserv.brown.edu
+      notmuch tag +lists +lists/LCS-members              -- is:new and to:members@lists.conlang.org
+      notmuch tag +lists +lists/EFFector        -to-me   -- is:new and from:editor@eff.org
+      notmuch tag +lists +lists/SIL-font-news            -- is:new and to:sil-font-news@groups.sil.org
+      notmuch tag +lists +lists/bulletproof-tls -to-me   -- is:new and from:newsletter@feistyduck.com
+      notmuch tag +lists +lists/xrds-acm                 -- is:new and to:XRDS-NEWSLETTER@listserv.acm.org
+      notmuch tag +lists +lists/technews-acm    -to-me   -- is:new and from:technews@hq.acm.organization
+      notmuch tag +lists +lists/debian-security-announce -- is:new and to:debian-security-announce@lists.debian.org
+      notmuch tag +lists +lists/info-fsf        -to-me   -- is:new and from:info@fsf.org
+      notmuch tag +lists +lists/info-gnu                 -- is:new and from:info-gnu-request@gnu.org
+      notmuch tag +lists +lists/perl-qa                  -- is:new and to:perl-qa@perl.org
+      notmuch tag +lists +lists/c++embedded    +c++      -- is:new and to:embedded@open-std.org
+      notmuch tag +lists +lists/cxx-abi-dev    +c++      -- is:new and to:cxx-abi-dev@codesourcery.com
+      notmuch tag +lists +lists/std-discussion +c++      -- is:new and to:std-discussion@isocpp.org
+      notmuch tag +lists +lists/std-proposals  +c++      -- is:new and to:std-proposals@isocpp.org
+      notmuch tag +lists +lists/sg2-modules    +c++      -- is:new and to:modules@isocpp.org
+      notmuch tag +lists +lists/sg5-tm         +c++      -- is:new and to:tm@isocpp.org
+      notmuch tag +lists +lists/sg7-reflection +c++      -- is:new and to:reflection@isocpp.org
+      notmuch tag +lists +lists/sg8-concepts   +c++      -- is:new and to:concepts@isocpp.org
+      notmuch tag +lists +lists/sg9-ranges     +c++      -- is:new and to:ranges@open-std.org
+      notmuch tag +lists +lists/sg10-features  +c++      -- is:new and to:features@open-std.org
+      notmuch tag +lists +lists/sg12-ub        +c++      -- is:new and to:ub@open-std.org
+      notmuch tag +lists +lists/sg13-hmi       +c++      -- is:new and to:sg13@isocpp.org
+      notmuch tag +lists +lists/MIT-daily      -to-me    -- is:new and list:80f62adc67c5889c8cf03eb72.174773.list-id.mcsv.net
+      notmuch tag +lists +lists/MITAC          -to-me    -- is:new and list:7dfb17e8237543c1b898119e1.250537.list-id.mcsv.net
+      notmuch tag +lists +lists/GSC-anno       -to-me    -- is:new and list:cdee009ad27356d631e8ca5b8.380005.list-id.mcsv.net
+      notmuch tag +lists +lists/LSA            -to-me    -- is:new and list:001f7eb7302f6add98bff7e46.216539.list-id.mcsv.net
+
+      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:awesome-cornell@noreply.github.com
+      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:CornellCSWiki@noreply.github.com
+      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource-owner@freeculture.org
+      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource@freeculture.org
+      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:open-source-cornell-l@cornell.edu
+
+      notmuch tag +cornell/cs -- is:new and to:ACSU-L@cornell.edu
+      notmuch tag +cornell/cs -- is:new and to:CS-MAJORS-L@list.cornell.edu
+
+      notmuch tag +cornell/linguistics +underlings -- is:new and to:UNDERLINGS-L@list.cornell.edu
+      notmuch tag +cornell/linguistics +underlings -- is:new and subject:"underlings-l subscription report"
+      notmuch tag +cornell/linguistics +underlings -- is:new and to:culinguisticscolloquium@gmail.com
+      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-INTEREST-L@list.cornell.edu
+      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-UNDERGRAD-L@list.cornell.edu
+      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-TALKS-L@list.cornell.edu
+      notmuch tag +cornell/linguistics             -- is:new and to:PSC-LEP-L@list.cornell.edu
+
+      notmuch tag +employment -to-me               -- is:new and from:linkedin.com
+
+      notmuch tag +twitch -to-me -new              -- is:new and from:twitch.tv
+
+      notmuch tag +debianchania -- is:new and to:debianchania@googlegroups.com
+
+      notmuch tag +test-anything-protocol -- is:new and to:Specification@noreply.github.com
+
+      notmuch tag +deleted -- is:new and path:personal/Trash/**
+      notmuch tag +deleted -- is:new and path:gmail/Trash/**
+      notmuch tag +deleted -- is:new and path:cornell/Trash/**
+      notmuch tag +deleted -- is:new and path:culc/Trash/**
+      notmuch tag +deleted -- is:new and path:mit/Deleted\ Items/**
+
+      notmuch tag +spam -- is:new and path:personal/Junk/**
+      notmuch tag +spam -- is:new and path:gmail/Junk/**
+      notmuch tag +spam -- is:new and path:cornell/Junk/**
+      notmuch tag +spam -- is:new and path:culc/Junk/**
+      notmuch tag +spam -- is:new and path:mit/Junk\ E-Mail/**
+      notmuch tag +spam -- from:ss@sciencepg.com
+      notmuch tag +spam -- to:patrick@pniedzielski.net and isabel_hardy@renesteens.nl
+      notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pmstarpromotions.com
+      notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pnkgroup.net
+      notmuch tag +spam -- from:asiaz@rivergroups.com
+      notmuch tag +spam -- from:"Jessica Lee"
+      notmuch tag +spam -- from:jessica@hirahong-kongtailors.net
+      notmuch tag +spam -- from:jessica@hirastravelling-tailor.net
+      notmuch tag +spam -- from:jessica@hiras-customsuitmaker.com
+      notmuch tag +spam -- from:jessica@hiras-thehktailor.net
+      notmuch tag +spam -- from:jessica@hirayourbest-tailor.net
+      notmuch tag +spam -- from:jessica@hiras-yourtailor.com
+      notmuch tag +spam -- from:jessica@hirahk-suitmakers.net
+      notmuch tag +spam -- from:@hira
+      #notmuch tag +spam -- from:"Asia from"
+      notmuch tag +spam -- from:prep@review.com
+      notmuch tag +spam -- from:schoolandnewsinfo@review-schools.com
+
+      notmuch tag +draft -- is:new and path:personal/Draft/**
+      notmuch tag +draft -- is:new and path:gmail/Draft/**
+      notmuch tag +draft -- is:new and path:cornell/Draft/**
+      notmuch tag +draft -- is:new and path:culc/Draft/**
+      notmuch tag +draft -- is:new and path:mit/Drafts/**
+
+      notmuch tag +inbox -- is:new and is:to-me and is:sent
+
+      notmuch tag -new -- is:feeds
+      notmuch tag -new -- is:lists
+      notmuch tag -new -- is:deleted
+      notmuch tag -new -- is:spam
+      notmuch tag -new -- is:sent
+      notmuch tag -new -- is:draft
+
+      notmuch tag +spam -- from:denicecassaro@cornell.edu
+
+      notmuch tag +inbox -new -- is:new
+
+    #+end_src
+
+** Accounts
+*** Personal
+    This is the self-hosted email that I use for most things.
+
+    - Address: =patrick@pniedzielski.net=
+    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with self-signed certificate.
+    - SMTP: =tocharian.pniedzielski.net=, STARTTLS with self-signed certificate
+      on message submission port (587).
+
+    First, make a directory in the Maildir hierarchy for emails from this
+    account.
+
+    #+begin_src shell
+      mkdir -p ~/Retpoŝtoj/personal/{cur,new,tmp}
+    #+end_src
+
+**** Isync
+     #+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
+       ###############################################################################
+
+
+       IMAPAccount              personal
+       Host                     tocharian.pniedzielski.net
+       User                     pniedzielski
+       PassCmd                  "pass mail/personal"
+       SSLType                  imaps
+       SSLVersions              TLSv1.2
+       CertificateFile          ~/.local/share/ssl/certs/tocharian.pniedzielski.net.pem
+
+       IMAPStore                personal-remote
+       Account                  personal
+
+       MaildirStore             personal-local
+       Path                     ~/Retpoŝtoj/personal/
+       Inbox                    ~/Retpoŝtoj/personal/Inbox
+       SubFolders               Legacy
+
+       Channel                  personal
+       Master                   :personal-remote:
+       Slave                    :personal-local:
+       Patterns                 * !Archive*
+       Create                   Both
+       CopyArrivalDate          yes
+       SyncState                *
+     #+end_src
+
+     #+caption: Self-signed certificate in ~.local/share/ssl/certs/tocharian.pniedzielski.net.pem~
+     #+begin_src fundamental   :tangle mail/.local/share/ssl/certs/tocharian.pniedzielski.net.pem
+       -----BEGIN CERTIFICATE-----
+       MIIDdTCCAl2gAwIBAgIUGS1QUBOsRk2+28N9rUwTb5wn7HEwDQYJKoZIhvcNAQEL
+       BQAwSjELMAkGA1UEBhMCVVMxFjAUBgNVBAgMDU1hc3NhY2h1c2V0dHMxIzAhBgNV
+       BAMMGnRvY2hhcmlhbi5wbmllZHppZWxza2kubmV0MB4XDTIwMDIxNjA0MzM1OVoX
+       DTIxMDIxNTA0MzM1OVowSjELMAkGA1UEBhMCVVMxFjAUBgNVBAgMDU1hc3NhY2h1
+       c2V0dHMxIzAhBgNVBAMMGnRvY2hhcmlhbi5wbmllZHppZWxza2kubmV0MIIBIjAN
+       BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxPaaow+ZA+KHtmnaXMRH7jLFxbj9
+       78ZLNDHS+3WNcQnCtlU2hcktwsuD2sS62ac2Jyojor9VIGN2I2No5MikH7gSw8xC
+       7KoBT9b8bUpBz3VBs4SYRrVIT/NpVFCoOfWqY0p9XckeN3IqIwHzljPZ31HrCV31
+       yfJUi2ze6j0KG1EiZ1RhQUi3ya2lQy17/dEKKKhyKABrxcBJwecOheAluXEKu1Z3
+       GOIBW+7yUEHAmYI5higfRWo27pzA5pERvgApCRe4L6sWH9tMS4rrTuPAXVjLDEEA
+       sOAQpulobUCSoU4/NSefO3S6KqxNd4tkwPIbB7y8ucSw/hFgYHyV96cP4wIDAQAB
+       o1MwUTAdBgNVHQ4EFgQUiELRBTMerCUJyGnrAN3X3aF7INQwHwYDVR0jBBgwFoAU
+       iELRBTMerCUJyGnrAN3X3aF7INQwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+       AQsFAAOCAQEARBb/m8ppn4oQ85rxxQxo4J0d088SpAYLBDwDbsw8zgBe5UQZzGET
+       GA87clfNuSRZHeWjpfoqiZotI4G0VPMcfeWIeoJKlq3j4eeT7SpnwhLj+Dxn1uJA
+       K/QxpXGyJzKIDC454sxENvLWQIhwLRuAdm+UgR5KBkm7m/nZmQJQENnSwub9mdzP
+       xanGr25gwS/Cr36QTZcFilF0Cy26/8PZ8Cl1SnJbE+OtOyYhiTwGpwcQuzTdkFM/
+       5rmXedDYGupcs586nVx3GIRTho33A+0tHdpxYvubv9hRRT1iQucID2+mM/8jfwzA
+       WaffqWZKldMJbBpXwOrK1YT+h1/cgwaavQ==
+       -----END CERTIFICATE-----
+      #+end_src
+
+**** Msmtp
+     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
+       ###############################################################################
+
+
+       account           personal
+       tls_starttls      on
+       tls_fingerprint   A8:ED:DD:AD:C4:36:CA:0C:60:8C:CB:9F:5B:ED:FB:A3:19:04:B4:64:CB:F0:C8:F2:4B:2A:58:3C:7A:DE:CF:77
+       host              tocharian.pniedzielski.net
+       port              587
+       from              patrick@pniedzielski.net
+       user              pniedzielski
+       passwordeval      pass mail/personal
+     #+end_src
+
+*** MIT
+    This is my university email, which I use for MIT-related/academic work.
+    This mail is hosted on an Exchange server, but I access it via davmail on a
+    raspberry pi.
+
+    - Address: =pnski@mit.edu=
+    - IMAP: =celtic.pniedzielski.net:1143=, IMAPS.
+    - SMTP: =celtic.pniedzielski.net:1025=, SMTPS.
+
+    First, make a directory in the Maildir hierarchy for emails from this
+    account.
+
+    #+begin_src shell
+      mkdir -p ~/Retpoŝtoj/mit/{cur,new,tmp}
+    #+end_src
+
+**** Isync
+     #+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                         MIT EMAIL (celtic.pniedzielski.net) #
+       ###############################################################################
+
+
+       IMAPAccount              mit
+       Host                     celtic.pniedzielski.net
+       Port                     1143
+       User                     pnski
+       PassCmd                  "pass mit/kerberos"
+       SSLType                  imaps
+       AuthMechs                LOGIN
+       SSLVersions              TLSv1.2
+       CertificateFile          ~/.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem
+
+       IMAPStore                mit-remote
+       Account                  mit
+
+       MaildirStore             mit-local
+       Path                     ~/Retpoŝtoj/mit/
+       Inbox                    ~/Retpoŝtoj/mit/Inbox
+       SubFolders               Verbatim
+
+       Channel                  mit
+       Master                   :mit-remote:
+       Slave                    :mit-local:
+       Patterns                 * !Archive*
+       Create                   Both
+       CopyArrivalDate          yes
+       SyncState                *
+
+       Channel                  mit-archive
+       Master                   :mit-remote:
+       Slave                    :mit-local:
+       Patterns                 Archive*
+       Create                   Both
+       CopyArrivalDate          yes
+       SyncState                *
+     #+end_src
+
+     #+caption: Self-signed certificate in ~.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem~
+     #+begin_src fundamental   :tangle mail/.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem
+       -----BEGIN CERTIFICATE-----
+       MIID4TCCAskCFG2b3mJQQPb8p4JajrvpJ7rAcTh4MA0GCSqGSIb3DQEBCwUAMIGs
+       MQswCQYDVQQGEwJVUzEWMBQGA1UECAwNTWFzc2FjaHVzZXR0czESMBAGA1UEBwwJ
+       Q2FtYnJpZGdlMRUwEwYDVQQKDAxwbmllZHppZWxza2kxDzANBgNVBAsMBmNlbHRp
+       YzEgMB4GA1UEAwwXY2VsdGljLnBuaWVkemllbHNraS5uZXQxJzAlBgkqhkiG9w0B
+       CQEWGHBhdHJpY2tAcG5pZWR6aWVsc2tpLm5ldDAeFw0xOTA3MTgwMzEwMjJaFw0y
+       MzA4MjYwMzEwMjJaMIGsMQswCQYDVQQGEwJVUzEWMBQGA1UECAwNTWFzc2FjaHVz
+       ZXR0czESMBAGA1UEBwwJQ2FtYnJpZGdlMRUwEwYDVQQKDAxwbmllZHppZWxza2kx
+       DzANBgNVBAsMBmNlbHRpYzEgMB4GA1UEAwwXY2VsdGljLnBuaWVkemllbHNraS5u
+       ZXQxJzAlBgkqhkiG9w0BCQEWGHBhdHJpY2tAcG5pZWR6aWVsc2tpLm5ldDCCASIw
+       DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAO3TeWZ+mhTTQjhVRh7J+KM1nPHx
+       NI5l82V8hLZwvky3+yZnYhqlfTZPpY4wGRqD+D5bkNRh0NbBkSvjDfnvCx9KKlFK
+       JHyNYxW4VMFUjw6ENkzeazeaDj0d++A5lydbhBh3fyYztZQQh3x1ddiGxtITNcto
+       Dw/jwYjlk9poHnQxkDOe/CUUXKNAeikrrdBdz21oi5J/zFineKK3NebohFSd+kg2
+       g+lsYsOH1oq4FhKGtmJqQYynw9GocF+oEaUE2AUPaHkJDmlWrS0mOpPirviiSKcE
+       jEIsQR/6LLBGFQnLSGr+DZkWYqUPvw1fF/33eArDjrzDCZXCOXKHhFlOQqsCAwEA
+       ATANBgkqhkiG9w0BAQsFAAOCAQEAiZgjusTzJZj6IIP+c373tRBSXtE7JWEGPanw
+       8EUr11N1R4QrQ+R2PGVwJXsbr3uBNXaD2/8eI/uqZKLaMo+ga24lypTaFBeep0Ph
+       rCETkY/CGe+1LsYkCDDwNOOEUo3xpzfsAxzEfAzE6fp1NTbcP/nb77SaVgYEmXwq
+       GfJ27AzmvetLhv3lyXlyjmt27bFlrV/jFrwYZ4HUT3RUTYx+RwB5HIQUPHxCYXXx
+       gTZlGXr70adOYRfblL3w2XT3q5wIydKuTfLuCmHdpWOyOPOaEMdYkDfxzb7qot9z
+       gnZAdRud+hw0SOOiKM6u/aMdaeDhzoohH6Hy0+g1ZBDZwVmxJQ==
+       -----END CERTIFICATE-----
+      #+end_src
+
+**** Msmtp
+     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                         MIT EMAIL (celtic.pniedzielski.net) #
+       ###############################################################################
+
+
+       account           mit
+       tls_starttls      off
+       tls_fingerprint   12:B0:D1:83:1E:A3:F0:97:91:DD:3A:2D:39:99:95:E2:AE:FB:00:D3:EB:5B:EE:E7:D8:3A:6D:24:99:62:62:06
+       host              celtic.pniedzielski.net
+       port              1025
+       from              pnski@mit.edu
+       user              pnski
+       passwordeval      pass mit/kerberos
+     #+end_src
+
+*** Gmail
+    This is an older email account that I mainly use as an archive and for
+    emails I’ll need for self-hosted services, just in case I cannot access
+    =tocharian.pniedzielski.net=.
+
+    - Address: =PatrickNiedzielski@gmail.com=
+    - IMAP: =imap.gmail.com=, IMAPS.
+    - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
+
+    First, make a directory in the Maildir hierarchy for emails from this
+    account.
+
+    #+begin_src shell
+      mkdir -p ~/Retpoŝtoj/gmail/{cur,new,tmp}
+    #+end_src
+
+**** Lieer
+
+**** Msmtp
+     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                                      GMAIL (imap.gmail.com) #
+       ###############################################################################
+
+
+       account           gmail
+       tls_starttls      on
+       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+       host              smtp.gmail.com
+       port              587
+       from              PatrickNiedzielski@gmail.com
+       user              PatrickNiedzielski@gmail.com
+       passwordeval      pass mail/gmail
+     #+end_src
+
+*** Cornell
+    This is the university email that I use for Cornell-related work.  This
+    account is hosted by Gmail.
+
+    - Address: =pmn25@cornell.edu=
+    - IMAP: =imap.gmail.com=, IMAPS.
+    - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
+
+    First, make a directory in the Maildir hierarchy for emails from this
+    account.
+
+    #+begin_src shell
+      mkdir -p ~/Retpoŝtoj/cornell/{cur,new,tmp}
+    #+end_src
+
+**** Lieer
+
+**** Msmtp
+     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+       ###############################################################################
+       #                                              CORNELL EMAIL (imap.gmail.com) #
+       ###############################################################################
+
+
+       account           cornell
+       tls_starttls      on
+       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+       host              smtp.gmail.com
+       port              587
+       from              pmn25@cornell.edu
+       user              pmn25@cornell.edu
+       passwordeval      pass mail/gmail
+     #+end_src
 
 * Git
 
