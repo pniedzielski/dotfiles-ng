@@ -1068,7 +1068,15 @@
       s|LOG=~/log/msmtp.queue.log|LOG=\$XDG_DATA_HOME/msmtp/queue.log|;
     #+end_src
 
-    Now, we can just use the local =msmtpq= program as our MTA!
+    We are almost ready to just use the local =msmtpq= program as our MTA!
+    However, if we are running apparmor on our system, we won’t be able to read
+    the local configuration file using the default profile.  We will add to the
+    whitelist the ability to read any path in the home directory that ends in
+    ~msmtp/config~.
+
+    #+begin_src shell   :dir /sudo::
+      echo 'owner @{HOME}/**/msmtp/config r,' >> /etc/apparmor.d/local/usr.bin.msmtp
+    #+end_src
 
     Configuring =msmtp=, like =isync= is fairly simple.
 
