@@ -1141,16 +1141,45 @@
     #+end_src
 
 *** Automating
-    #+caption: Source listing for ~.local/bin/pn-mail-sync~.
-    #+begin_src shell   :tangle mail/.local/bin/pn-mail-sync   :noweb yes   :shebang "#!/bin/sh"
+    We can automate the synchronizing of mail and tagging using [[man:notmuch-hooks][Notmuch’s hooks]].
+    There are two hooks that we need to consider:
+
+      - ~pre-new~ :: This hook runs when ~notmuch new~ is called, but before the
+        database is updated.  This is a good place to synchronize our mail with
+        the network.  It is important that we should always succeed in this
+        hook, even if the network is down.
+
+      - ~post-new~ :: This hook runs after ~notmuch new~ is called, and after
+        the database is updated.  At this point, any new messages should be
+        tagged with ~new~.  This is where we want to do initial tagging.
+
+    Let’s take a look at the ~pre-new~ hook:
+
+    #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/pre-new~.
+    #+begin_src shell   :tangle mail/Retpoŝtoj/.notmuch/hooks/pre-new   :noweb yes   :shebang "#!/bin/sh"
+      # -*- sh -*-
+
+      # Flush out the outbox.
       msmtp-queue -r
 
-      (echo -n "Sync Personal…" && mbsync -c ~/.config/isync/config personal     && echo "Done!") || echo "Error!"
-      (echo -n "Sync MIT…"      && mbsync -c ~/.config/isync/config mit          && echo "Done!") || echo "Error!"
-      (echo -n "Sync Gmail…"    && cd ~/Retpoŝtoj/gmail   && gmi sync >/dev/null && echo "Done!") || echo "Error!"
-      (echo -n "Sync Cornell…"  && cd ~/Retpoŝtoj/cornell && gmi sync >/dev/null && echo "Done!") || echo "Error!"
+      # Pull new mail from our accounts.
+      (echo -n "Sync Personal…" && mbsync -c ~/.config/isync/config personal     && echo "Done!") || echo "Error!" &
+      (echo -n "Sync MIT…"      && mbsync -c ~/.config/isync/config mit          && echo "Done!") || echo "Error!" &
+      (echo -n "Sync Gmail…"    && cd ~/Retpoŝtoj/gmail   && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
+      (echo -n "Sync Cornell…"  && cd ~/Retpoŝtoj/cornell && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
 
-      notmuch new
+      wait
+    #+end_src
+
+    Syncing my mail used to take quite a long time, because I pulled mail from
+    each account sequentially.  The above hook pulls each account in parallel,
+    and then waits for them all to complete before moving on.
+
+    Now, let’s take a look at the tagging in the ~post-new~ hook:
+
+    #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/post-new~.
+    #+begin_src shell   :tangle mail/Retpoŝtoj/.notmuch/hooks/post-new   :noweb yes   :shebang "#!/bin/sh"
+      # -*- sh -*-
 
       notmuch tag +account/personal -- is:new and path:personal/**
       notmuch tag +account/mit      -- is:new and path:mit/**
@@ -1271,7 +1300,6 @@
       notmuch tag +spam -- from:denicecassaro@cornell.edu
 
       notmuch tag +inbox -new -- is:new
-
     #+end_src
 
 ** Accounts
