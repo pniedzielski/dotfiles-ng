@@ -1302,6 +1302,51 @@
       notmuch tag +inbox -new -- is:new
     #+end_src
 
+    Now that notmuch is configured to synchronize our local mail with our remote
+    accounts and to tag our mail, we want this to happen in the background.  We
+    can accomplish this using systemd timers.
+
+    First, we need to set up a systemd user unit that, when started, runs
+    ~notmuch new~:
+
+    #+caption: Source listing for ~.config/systemd/user/mail-sync.service~.
+    #+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.service   :noweb yes
+      [Unit]
+      Description=Synchronize local mail with remote accounts
+      RefuseManualStart=no
+      RefuseManualStop=no
+
+      [Service]
+      Type=oneshot
+      ExecStart=notmuch new
+    #+end_src
+
+    Now, we want to run this unit on a timer.  Let’s choose once every five
+    minutes:
+
+    #+caption: Source listing for ~.config/systemd/user/mail-sync.timer~.
+    #+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.timer   :noweb yes
+      [Unit]
+      Description=Synchronize local mail with remote accounts at regular intervals
+      RefuseManualStart=no
+      RefuseManualStop=no
+
+      [Timer]
+      Persistent=false
+      OnBootSec=2min
+      OnUnitActiveSec=5min
+      Unit=mail-sync.service
+
+      [Install]
+      WantedBy=default.target
+    #+end_src
+
+    Finally, let’s enable both the timer:
+
+    #+begin_src shell
+      systemd --user enable mail-sync.timer
+    #+end_src
+
 ** Accounts
 *** Personal
     This is the self-hosted email that I use for most things.
