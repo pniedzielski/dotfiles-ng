@@ -1413,12 +1413,23 @@
 
 *** MIT
     This is my university email, which I use for MIT-related/academic work.
-    This mail is hosted on an Exchange server, but I access it via davmail on a
-    raspberry pi.
+    This account is by far the one that gives me the most trouble.  My
+    university hosts mail on an Exchange server that provides IMAP and SMTP, but
+    only barely.  I’ve tried several different ways of working with this account
+    locally, including directly using their anemic IMAP and SMTP server, or
+    routing the access through [[http://davmail.sourceforge.net/][DavMail]], but right now I’m forwarding all the
+    mail to my personal hosted email server (which works beautifully), and using
+    IMAP from it.  SMTP still goes through the Exchange server, which isn’t
+    ideal, but which works better than the Exchange IMAP does.
+
+    What this looks like on my server is an additional mailbox, =mit=, with its
+    own password and IMAP hierarchy.  IMAP accesses the same address as
+    [[*Personal][Personal]], but uses a different user.  Otherwise, the configuration should be
+    identical.  For SMTP, I use the Exchange SMTP directly.
 
     - Address: =pnski@mit.edu=
-    - IMAP: =celtic.pniedzielski.net:1143=, IMAPS.
-    - SMTP: =celtic.pniedzielski.net:1025=, SMTPS.
+    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
+    - SMTP: =outgoing.mit.edu=, SMTPS.
 
     First, make a directory in the Maildir hierarchy for emails from this
     account.
@@ -1430,19 +1441,16 @@
 **** Isync
      #+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
        ###############################################################################
-       #                                         MIT EMAIL (celtic.pniedzielski.net) #
+       #                                      MIT EMAIL (tocharian.pniedzielski.net) #
        ###############################################################################
 
 
        IMAPAccount              mit
-       Host                     celtic.pniedzielski.net
-       Port                     1143
-       User                     pnski
-       PassCmd                  "pass mit/kerberos"
+       Host                     tocharian.pniedzielski.net
+       User                     mit
+       PassCmd                  "pass mail/mit"
        SSLType                  imaps
-       AuthMechs                LOGIN
        SSLVersions              TLSv1.2
-       CertificateFile          ~/.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem
 
        IMAPStore                mit-remote
        Account                  mit
@@ -1450,7 +1458,7 @@
        MaildirStore             mit-local
        Path                     ~/Retpoŝtoj/mit/
        Inbox                    ~/Retpoŝtoj/mit/Inbox
-       SubFolders               Verbatim
+       SubFolders               Legacy
 
        Channel                  mit
        Master                   :mit-remote:
@@ -1469,45 +1477,18 @@
        SyncState                *
      #+end_src
 
-     #+caption: Self-signed certificate in ~.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem~
-     #+begin_src fundamental   :tangle mail/.local/share/ssl/certs/celtic.pniedzielski.net.davmail.pem
-       -----BEGIN CERTIFICATE-----
-       MIID4TCCAskCFG2b3mJQQPb8p4JajrvpJ7rAcTh4MA0GCSqGSIb3DQEBCwUAMIGs
-       MQswCQYDVQQGEwJVUzEWMBQGA1UECAwNTWFzc2FjaHVzZXR0czESMBAGA1UEBwwJ
-       Q2FtYnJpZGdlMRUwEwYDVQQKDAxwbmllZHppZWxza2kxDzANBgNVBAsMBmNlbHRp
-       YzEgMB4GA1UEAwwXY2VsdGljLnBuaWVkemllbHNraS5uZXQxJzAlBgkqhkiG9w0B
-       CQEWGHBhdHJpY2tAcG5pZWR6aWVsc2tpLm5ldDAeFw0xOTA3MTgwMzEwMjJaFw0y
-       MzA4MjYwMzEwMjJaMIGsMQswCQYDVQQGEwJVUzEWMBQGA1UECAwNTWFzc2FjaHVz
-       ZXR0czESMBAGA1UEBwwJQ2FtYnJpZGdlMRUwEwYDVQQKDAxwbmllZHppZWxza2kx
-       DzANBgNVBAsMBmNlbHRpYzEgMB4GA1UEAwwXY2VsdGljLnBuaWVkemllbHNraS5u
-       ZXQxJzAlBgkqhkiG9w0BCQEWGHBhdHJpY2tAcG5pZWR6aWVsc2tpLm5ldDCCASIw
-       DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAO3TeWZ+mhTTQjhVRh7J+KM1nPHx
-       NI5l82V8hLZwvky3+yZnYhqlfTZPpY4wGRqD+D5bkNRh0NbBkSvjDfnvCx9KKlFK
-       JHyNYxW4VMFUjw6ENkzeazeaDj0d++A5lydbhBh3fyYztZQQh3x1ddiGxtITNcto
-       Dw/jwYjlk9poHnQxkDOe/CUUXKNAeikrrdBdz21oi5J/zFineKK3NebohFSd+kg2
-       g+lsYsOH1oq4FhKGtmJqQYynw9GocF+oEaUE2AUPaHkJDmlWrS0mOpPirviiSKcE
-       jEIsQR/6LLBGFQnLSGr+DZkWYqUPvw1fF/33eArDjrzDCZXCOXKHhFlOQqsCAwEA
-       ATANBgkqhkiG9w0BAQsFAAOCAQEAiZgjusTzJZj6IIP+c373tRBSXtE7JWEGPanw
-       8EUr11N1R4QrQ+R2PGVwJXsbr3uBNXaD2/8eI/uqZKLaMo+ga24lypTaFBeep0Ph
-       rCETkY/CGe+1LsYkCDDwNOOEUo3xpzfsAxzEfAzE6fp1NTbcP/nb77SaVgYEmXwq
-       GfJ27AzmvetLhv3lyXlyjmt27bFlrV/jFrwYZ4HUT3RUTYx+RwB5HIQUPHxCYXXx
-       gTZlGXr70adOYRfblL3w2XT3q5wIydKuTfLuCmHdpWOyOPOaEMdYkDfxzb7qot9z
-       gnZAdRud+hw0SOOiKM6u/aMdaeDhzoohH6Hy0+g1ZBDZwVmxJQ==
-       -----END CERTIFICATE-----
-      #+end_src
-
 **** Msmtp
      #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
        ###############################################################################
-       #                                         MIT EMAIL (celtic.pniedzielski.net) #
+       #                                                MIT EMAIL (outgoing.mit.edu) #
        ###############################################################################
 
 
        account           mit
        tls_starttls      off
-       tls_fingerprint   12:B0:D1:83:1E:A3:F0:97:91:DD:3A:2D:39:99:95:E2:AE:FB:00:D3:EB:5B:EE:E7:D8:3A:6D:24:99:62:62:06
-       host              celtic.pniedzielski.net
-       port              1025
+       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+       host              outgoing.mit.edu
+       port              465
        from              pnski@mit.edu
        user              pnski
        passwordeval      pass mit/kerberos
