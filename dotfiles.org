@@ -1352,8 +1352,8 @@
     This is the self-hosted email that I use for most things.
 
     - Address: =patrick@pniedzielski.net=
-    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with self-signed certificate.
-    - SMTP: =tocharian.pniedzielski.net=, STARTTLS with self-signed certificate
+    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
+    - SMTP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
       on message submission port (587).
 
     First, make a directory in the Maildir hierarchy for emails from this
@@ -1376,7 +1376,6 @@
        PassCmd                  "pass mail/personal"
        SSLType                  imaps
        SSLVersions              TLSv1.2
-       CertificateFile          ~/.local/share/ssl/certs/tocharian.pniedzielski.net.pem
 
        IMAPStore                personal-remote
        Account                  personal
@@ -1395,31 +1394,6 @@
        SyncState                *
      #+end_src
 
-     #+caption: Self-signed certificate in ~.local/share/ssl/certs/tocharian.pniedzielski.net.pem~
-     #+begin_src fundamental   :tangle mail/.local/share/ssl/certs/tocharian.pniedzielski.net.pem
-       -----BEGIN CERTIFICATE-----
-       MIIDdTCCAl2gAwIBAgIUGS1QUBOsRk2+28N9rUwTb5wn7HEwDQYJKoZIhvcNAQEL
-       BQAwSjELMAkGA1UEBhMCVVMxFjAUBgNVBAgMDU1hc3NhY2h1c2V0dHMxIzAhBgNV
-       BAMMGnRvY2hhcmlhbi5wbmllZHppZWxza2kubmV0MB4XDTIwMDIxNjA0MzM1OVoX
-       DTIxMDIxNTA0MzM1OVowSjELMAkGA1UEBhMCVVMxFjAUBgNVBAgMDU1hc3NhY2h1
-       c2V0dHMxIzAhBgNVBAMMGnRvY2hhcmlhbi5wbmllZHppZWxza2kubmV0MIIBIjAN
-       BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxPaaow+ZA+KHtmnaXMRH7jLFxbj9
-       78ZLNDHS+3WNcQnCtlU2hcktwsuD2sS62ac2Jyojor9VIGN2I2No5MikH7gSw8xC
-       7KoBT9b8bUpBz3VBs4SYRrVIT/NpVFCoOfWqY0p9XckeN3IqIwHzljPZ31HrCV31
-       yfJUi2ze6j0KG1EiZ1RhQUi3ya2lQy17/dEKKKhyKABrxcBJwecOheAluXEKu1Z3
-       GOIBW+7yUEHAmYI5higfRWo27pzA5pERvgApCRe4L6sWH9tMS4rrTuPAXVjLDEEA
-       sOAQpulobUCSoU4/NSefO3S6KqxNd4tkwPIbB7y8ucSw/hFgYHyV96cP4wIDAQAB
-       o1MwUTAdBgNVHQ4EFgQUiELRBTMerCUJyGnrAN3X3aF7INQwHwYDVR0jBBgwFoAU
-       iELRBTMerCUJyGnrAN3X3aF7INQwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
-       AQsFAAOCAQEARBb/m8ppn4oQ85rxxQxo4J0d088SpAYLBDwDbsw8zgBe5UQZzGET
-       GA87clfNuSRZHeWjpfoqiZotI4G0VPMcfeWIeoJKlq3j4eeT7SpnwhLj+Dxn1uJA
-       K/QxpXGyJzKIDC454sxENvLWQIhwLRuAdm+UgR5KBkm7m/nZmQJQENnSwub9mdzP
-       xanGr25gwS/Cr36QTZcFilF0Cy26/8PZ8Cl1SnJbE+OtOyYhiTwGpwcQuzTdkFM/
-       5rmXedDYGupcs586nVx3GIRTho33A+0tHdpxYvubv9hRRT1iQucID2+mM/8jfwzA
-       WaffqWZKldMJbBpXwOrK1YT+h1/cgwaavQ==
-       -----END CERTIFICATE-----
-      #+end_src
-
 **** Msmtp
      #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
        ###############################################################################
@@ -1429,7 +1403,7 @@
 
        account           personal
        tls_starttls      on
-       tls_fingerprint   A8:ED:DD:AD:C4:36:CA:0C:60:8C:CB:9F:5B:ED:FB:A3:19:04:B4:64:CB:F0:C8:F2:4B:2A:58:3C:7A:DE:CF:77
+       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
        host              tocharian.pniedzielski.net
        port              587
        from              patrick@pniedzielski.net
