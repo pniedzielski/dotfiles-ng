@@ -834,6 +834,10 @@
       shopt -s checkwinsize
     #+END_SRC
 
+    #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+     export MOZ_ENABLE_WAYLAND=1
+    #+END_SRC
+
 * Readline
 
   [[https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html][GNU Readline]] is a library used by many programs for interactive command
