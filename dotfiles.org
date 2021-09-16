@@ -52,7 +52,7 @@
    Stow]].  To install Stow, you will want to install the `stow` package or
    equivalent; the command to do so for Debian is show below:
 
-   #+BEGIN_SRC shell   :dir /sudo::
+   #+BEGIN_src sh   :dir /sudo::
      DEBIAN_FRONTEND=noninteractive apt-get install stow
    #+END_SRC
 
@@ -901,7 +901,7 @@
   #+END_SRC
 
 * GnuPG
-  #+begin_src shell   :noweb-ref sh-xdg   :noweb-sep "\n"
+  #+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
      export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
   #+end_src
 
@@ -982,7 +982,7 @@
 
   Let’s create a directory to store our emails first:
 
-  #+begin_src shell
+  #+begin_src sh
     mkdir -p ~/Retpoŝtoj
   #+end_src
 
@@ -996,7 +996,7 @@
     C.  To get started, we need to make sure we have the =isync= package
     installed.  Let's install it:
 
-    #+begin_src shell   :dir /sudo::
+    #+begin_src sh   :dir /sudo::
       DEBIAN_FRONTEND=noninteractive apt-get install isync
     #+end_src
 
@@ -1033,7 +1033,7 @@
     implementation of a local mail queue, which I need for sending mail when
     offline.  So, first let’s install the =msmtp= package from Debian.
 
-    #+begin_src shell   :dir /sudo::
+    #+begin_src sh   :dir /sudo::
       DEBIAN_FRONTEND=noninteractive apt-get install msmtp
     #+end_src
 
@@ -1043,7 +1043,7 @@
     our MTA.  We need to copy them to our =PATH= and make sure they are
     executable.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p ~/.local/bin
       cp /usr/share/doc/msmtp/examples/msmtpq/msmtp-queue ~/.local/bin/
       cp /usr/share/doc/msmtp/examples/msmtpq/msmtpq      ~/.local/bin/
@@ -1055,7 +1055,7 @@
     queue is persistent between boots (just in case!).  Let’s create that
     directory.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p   $XDG_DATA_HOME/msmtp/queue
       chmod 0700 $XDG_DATA_HOME/msmtp/queue
     #+end_src
@@ -1074,7 +1074,7 @@
     whitelist the ability to read any path in the home directory that ends in
     ~msmtp/config~.
 
-    #+begin_src shell   :dir /sudo::
+    #+begin_src sh   :dir /sudo::
       echo 'owner @{HOME}/**/msmtp/config r,' >> /etc/apparmor.d/local/usr.bin.msmtp
     #+end_src
 
@@ -1100,7 +1100,7 @@
     In order to index and search our mail, we use [[https://notmuchmail.org/][notmuch]].  Let’s first install
     this from the Debian archive:
 
-    #+begin_src shell   :dir /sudo::
+    #+begin_src sh   :dir /sudo::
       DEBIAN_FRONTEND=noninteractive apt-get install notmuch
     #+end_src
 
@@ -1111,7 +1111,7 @@
     home.  We can configure this using an environment variable, though, so we
     can hide this away within the XDG configuration directory.
 
-    #+begin_src shell   :noweb-ref sh-xdg   :noweb-sep "\n"
+    #+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
       export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/config"
     #+end_src
 
@@ -1156,7 +1156,7 @@
     Let’s take a look at the ~pre-new~ hook:
 
     #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/pre-new~.
-    #+begin_src shell   :tangle mail/Retpoŝtoj/.notmuch/hooks/pre-new   :noweb yes   :shebang "#!/bin/sh"
+    #+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/pre-new   :noweb yes   :shebang "#!/bin/sh"
       # -*- sh -*-
 
       # Flush out the outbox.
@@ -1178,7 +1178,7 @@
     Now, let’s take a look at the tagging in the ~post-new~ hook:
 
     #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/post-new~.
-    #+begin_src shell   :tangle mail/Retpoŝtoj/.notmuch/hooks/post-new   :noweb yes   :shebang "#!/bin/sh"
+    #+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/post-new   :noweb yes   :shebang "#!/bin/sh"
       # -*- sh -*-
 
       notmuch tag +account/personal -- is:new and path:personal/**
@@ -1343,7 +1343,7 @@
 
     Finally, let’s enable both the timer:
 
-    #+begin_src shell
+    #+begin_src sh
       systemd --user enable mail-sync.timer
     #+end_src
 
@@ -1359,7 +1359,7 @@
     First, make a directory in the Maildir hierarchy for emails from this
     account.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p ~/Retpoŝtoj/personal/{cur,new,tmp}
     #+end_src
 
@@ -1434,7 +1434,7 @@
     First, make a directory in the Maildir hierarchy for emails from this
     account.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p ~/Retpoŝtoj/mit/{cur,new,tmp}
     #+end_src
 
@@ -1506,7 +1506,7 @@
     First, make a directory in the Maildir hierarchy for emails from this
     account.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p ~/Retpoŝtoj/gmail/{cur,new,tmp}
     #+end_src
 
@@ -1540,7 +1540,7 @@
     First, make a directory in the Maildir hierarchy for emails from this
     account.
 
-    #+begin_src shell
+    #+begin_src sh
       mkdir -p ~/Retpoŝtoj/cornell/{cur,new,tmp}
     #+end_src
 
