@@ -44,6 +44,7 @@
 
    In short,
 
+   - to *run*, call ~org-babel-execute-buffer~ (~C-c C-v b~).
    - to *weave*, call ~org-export-dispatch~ (~C-c C-e~) and select the output
      format, and
    - to *tangle*, call ~org-babel-tangle~ (~C-c C-v t~).
@@ -52,15 +53,15 @@
    Stow]].  To install Stow, you will want to install the `stow` package or
    equivalent; the command to do so for Debian is show below:
 
-   #+BEGIN_src sh   :dir /sudo::
-     DEBIAN_FRONTEND=noninteractive apt-get install stow
+   #+BEGIN_src sh   :dir /sudo::   :results outputs verbatim
+     DEBIAN_FRONTEND=noninteractive apt-get -y install stow
    #+END_SRC
 
    Once this file has been tangled, you can pick the functionality you need on
    the system using Stow.  To install some set of functionality using Stow, run
    the following command from the root directory of this file
 
-   #+BEGIN_SRC sh
+   #+BEGIN_SRC sh   :eval never
      stow -t ~ -S feature1 feature2 feature3 …
    #+END_SRC
 
@@ -996,8 +997,8 @@
     C.  To get started, we need to make sure we have the =isync= package
     installed.  Let's install it:
 
-    #+begin_src sh   :dir /sudo::
-      DEBIAN_FRONTEND=noninteractive apt-get install isync
+    #+begin_src sh   :dir /sudo::   :results outputs verbatim
+      DEBIAN_FRONTEND=noninteractive apt-get -y install isync
     #+end_src
 
     Configuration of isync is not too hard, but there are some caveats.  As we
@@ -1033,8 +1034,8 @@
     implementation of a local mail queue, which I need for sending mail when
     offline.  So, first let’s install the =msmtp= package from Debian.
 
-    #+begin_src sh   :dir /sudo::
-      DEBIAN_FRONTEND=noninteractive apt-get install msmtp
+    #+begin_src sh   :dir /sudo::   :results outputs verbatim
+      DEBIAN_FRONTEND=noninteractive apt-get -y install msmtp
     #+end_src
 
     The mail queue scripts are installed along with documentation, along with a
@@ -1100,8 +1101,8 @@
     In order to index and search our mail, we use [[https://notmuchmail.org/][notmuch]].  Let’s first install
     this from the Debian archive:
 
-    #+begin_src sh   :dir /sudo::
-      DEBIAN_FRONTEND=noninteractive apt-get install notmuch
+    #+begin_src sh   :dir /sudo::   :results outputs verbatim
+      DEBIAN_FRONTEND=noninteractive apt-get -y install notmuch
     #+end_src
 
     Note that we don’t want to install notmuch-emacs, because it pulls in
@@ -1507,7 +1508,7 @@
     account.
 
     #+begin_src sh
-      mkdir -p ~/Retpoŝtoj/gmail/{cur,new,tmp}
+      mkdir -p ~/Retpoŝtoj/gmail
     #+end_src
 
 **** Lieer
