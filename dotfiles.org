@@ -1232,6 +1232,7 @@
       notmuch tag +lists +lists/MITAC          -to-me    -- is:new and list:7dfb17e8237543c1b898119e1.250537.list-id.mcsv.net
       notmuch tag +lists +lists/GSC-anno       -to-me    -- is:new and list:cdee009ad27356d631e8ca5b8.380005.list-id.mcsv.net
       notmuch tag +lists +lists/LSA            -to-me    -- is:new and list:001f7eb7302f6add98bff7e46.216539.list-id.mcsv.net
+      notmuch tag +lists +lists/emacs-humanities -to-me  -- is:new and to:emacs-humanities@gnu.org
 
       notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:awesome-cornell@noreply.github.com
       notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:CornellCSWiki@noreply.github.com
@@ -1286,6 +1287,19 @@
       #notmuch tag +spam -- from:"Asia from"
       notmuch tag +spam -- from:prep@review.com
       notmuch tag +spam -- from:schoolandnewsinfo@review-schools.com
+      notmuch tag +spam -- from:gutterprotectiondeals_advertisement@pointseducation.com
+      notmuch tag +spam -- from:us-concealed-online@instrumenteducation.com
+      notmuch tag +spam -- from:credit_score_ok@traininghonour.com
+      notmuch tag +spam -- from:mrmartin@houstonpressrelease.com
+      notmuch tag +spam -- from:goldalliedtrust.com@lifesfinancials.com
+      notmuch tag +spam -- from:kn95-mask-special@marvellian.com
+      notmuch tag +spam -- from:canvas-prints-discount@lrsionline.net
+      notmuch tag +spam -- from:canvas.prints.discount@noomstudios.com
+      notmuch tag +spam -- from:healthinsurancenet-offer@alliancenote.com
+      notmuch tag +spam -- from:health_insurance_net@thebestbargainshopping.com
+      notmuch tag +spam -- from:the-choice-home-warranty@mswbn.com
+      notmuch tag +spam -- from:us.concealed.online@stimevents.com
+      notmuch tag +spam -- from:leaffilter_promotion@basicsofbuying.com
 
       notmuch tag +draft -- is:new and path:personal/Draft/**
       notmuch tag +draft -- is:new and path:gmail/Draft/**
