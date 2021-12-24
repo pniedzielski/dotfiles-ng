@@ -7,925 +7,912 @@
 
 * Introduction
 
-  This document represents the results of my crazy experiment to manage my [[https://dotfiles.github.io/][UNIX
-  dotfiles]] using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]] with [[http://orgmode.org/][Emacs Org mode]].  These dotfiles
-  contain all my personal system configuration that I’m willing to make public
-  (that is, that doesn’t contain passwords or other sensitive information).  My
-  hope is that this setup will allow me to both easily migrate between machines
-  and keep track of /why/ my configuration is the way it is.
+This document represents the results of my crazy experiment to manage my [[https://dotfiles.github.io/][UNIX
+dotfiles]] using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]] with [[http://orgmode.org/][Emacs Org mode]].  These dotfiles contain
+all my personal system configuration that I’m willing to make public (that is,
+that doesn’t contain passwords or other sensitive information).  My hope is that
+this setup will allow me to both easily migrate between machines and keep track
+of /why/ my configuration is the way it is.
 
 ** What?
 
-   [[http://literateprogramming.com/][Literate Programming]] is a programming methodology first described by Donald
-   Knuth in which the software developer maintains not a source file containing
-   documentation, but rather a prose explanation of the program that contains
-   bits of the source code.  The prose explanation can be /weaved/ into a
-   typeset document or /tangled/ into a source file.  The benefits of this, when
-   done properly, come primarily through ease of maintenance—the prose
-   explanation can explain the reasons for data structure and algorithm
-   selection and program organization in a way that even the best, most lucid
-   source code cannot.  In other words, true Literate Programming allows the
-   programmer to explain /why/, not just /what/ or /how/.
+[[http://literateprogramming.com/][Literate Programming]] is a programming methodology first described by Donald
+Knuth in which the software developer maintains not a source file containing
+documentation, but rather a prose explanation of the program that contains bits
+of the source code.  The prose explanation can be /weaved/ into a typeset
+document or /tangled/ into a source file.  The benefits of this, when done
+properly, come primarily through ease of maintenance—the prose explanation can
+explain the reasons for data structure and algorithm selection and program
+organization in a way that even the best, most lucid source code cannot.  In
+other words, true Literate Programming allows the programmer to explain /why/,
+not just /what/ or /how/.
 
-   UNIX dotfiles are files that are generally stored within the user’s ~$HOME~
-   directory that contain configuration for the user’s software.  These files
-   are so-named because their filenames begin with a period, making them hidden
-   from most directory listings.
+UNIX dotfiles are files that are generally stored within the user’s ~$HOME~
+directory that contain configuration for the user’s software.  These files are
+so-named because their filenames begin with a period, making them hidden from
+most directory listings.
 
-   This file represents my attempt to maintain my dotfiles in a Literate
-   Programming way.
+This file represents my attempt to maintain my dotfiles in a Literate
+Programming way.
 
 ** How?
 
-   In order to accomplish this, I’m using the same technique I used to manage my
-   Emacs configuration: Org mode, and in particular, [[http://orgmode.org/worg/org-contrib/babel/intro.html][Org Babel]].  Org Babel
-   piggybacks on the normal Org mode export functionality to weave
-   documentation, and adds functionality to tangle the configuration files.
+In order to accomplish this, I’m using the same technique I used to manage my
+Emacs configuration: Org mode, and in particular, [[http://orgmode.org/worg/org-contrib/babel/intro.html][Org Babel]].  Org Babel
+piggybacks on the normal Org mode export functionality to weave documentation,
+and adds functionality to tangle the configuration files.
 
-   In short,
+In short,
 
-   - to *run*, call ~org-babel-execute-buffer~ (~C-c C-v b~).
-   - to *weave*, call ~org-export-dispatch~ (~C-c C-e~) and select the output
-     format, and
-   - to *tangle*, call ~org-babel-tangle~ (~C-c C-v t~).
+  - to *run*, call ~org-babel-execute-buffer~ (~C-c C-v b~).
+  - to *weave*, call ~org-export-dispatch~ (~C-c C-e~) and select the output
+    format, and
+  - to *tangle*, call ~org-babel-tangle~ (~C-c C-v t~).
 
-   Tangling this file will result in a directory structure usable with [[https://www.gnu.org/software/stow/][GNU
-   Stow]].  To install Stow, you will want to install the `stow` package or
-   equivalent; the command to do so for Debian is show below:
+Tangling this file will result in a directory structure usable with [[https://www.gnu.org/software/stow/][GNU Stow]].
+To install Stow, you will want to install the `stow` package or equivalent; the
+command to do so for Debian is show below:
 
-   #+BEGIN_src sh   :dir /sudo::   :results outputs verbatim
-     DEBIAN_FRONTEND=noninteractive apt-get -y install stow
-   #+END_SRC
+#+BEGIN_src sh   :dir /sudo::   :results outputs verbatim
+  DEBIAN_FRONTEND=noninteractive apt-get -y install stow
+#+END_SRC
 
-   Once this file has been tangled, you can pick the functionality you need on
-   the system using Stow.  To install some set of functionality using Stow, run
-   the following command from the root directory of this file
+Once this file has been tangled, you can pick the functionality you need on the
+system using Stow.  To install some set of functionality using Stow, run the
+following command from the root directory of this file
 
-   #+BEGIN_SRC sh   :eval never
-     stow -t ~ -S feature1 feature2 feature3 …
-   #+END_SRC
+#+BEGIN_SRC sh   :eval never
+  stow -t ~ -S feature1 feature2 feature3 …
+#+END_SRC
 
-   where each of ~feature1~, ~feature2~, and so on are directories created from
-   tangling this file.  This command will install symbolic links to the tangled
-   files under your home directory as needed.
+where each of ~feature1~, ~feature2~, and so on are directories created from
+tangling this file.  This command will install symbolic links to the tangled
+files under your home directory as needed.
 
 ** Why?
 
-   I’ve been maintaining my Emacs configuration through Literate Programming in
-   Org mode for a while now, and I’ve found it incredibly useful—although it
-   takes more work to properly maintain the configuration, the payout has been
-   extremely worthwhile.  Because I’ve maintained a prose description of why my
-   configuration is the way it is, and because I do not have to organize the
-   source blocks in the same order as they end up in the tangled configuration,
-   I can easily organize the Org file in such a way that all relevant blocks are
-   close together, thus minimizing any long-distance dependencies.  Where there
-   are long-distance dependencies, I can hyperlink between them, and thus make
-   sure that any changes I make do not result in a stale documentation.
-   Modifying this configuration is incredibly easy, especially compared to how
-   my configuration was before.
+I’ve been maintaining my Emacs configuration through Literate Programming in Org
+mode for a while now, and I’ve found it incredibly useful—although it takes more
+work to properly maintain the configuration, the payout has been extremely
+worthwhile.  Because I’ve maintained a prose description of why my configuration
+is the way it is, and because I do not have to organize the source blocks in the
+same order as they end up in the tangled configuration, I can easily organize
+the Org file in such a way that all relevant blocks are close together, thus
+minimizing any long-distance dependencies.  Where there are long-distance
+dependencies, I can hyperlink between them, and thus make sure that any changes
+I make do not result in a stale documentation.  Modifying this configuration is
+incredibly easy, especially compared to how my configuration was before.
 
-   In contrast, my dotfiles have been just that: dotfiles.  For simple
-   configurations, anything more is overkill.  Recently, though, I’ve been
-   running up against my dotfiles themselves.  For example, to properly
-   configure [[*GnuPG][GPG]], I need to make sure that my [[*Shell][shell configuration]], [[*SSH][SSH
-   configuration]], and [[*Emacs][Emacs configuration]] are all in sync (not to mention making
-   sure the multiple GnuPG 2.1 configuration files aren’t contradictory).  To
-   make it worse, lots of things depend on a properly configured GPG, and
-   sometimes in subtle ways.  I need to keep all these assumptions in mind when
-   I modify my GPG configuration, and that can affect the way I structure my GPG
-   configuration.  In particular, if I modify something incorrectly, I may (and
-   have) ended up with a machine that mysteriously wouldn’t let me log in, or
-   wouldn’t let me encrypt and decrypt files.  This is not something I enjoy
-   fixing, especially when I have other, more pressing things to be doing.
+In contrast, my dotfiles have been just that: dotfiles.  For simple
+configurations, anything more is overkill.  Recently, though, I’ve been running
+up against my dotfiles themselves.  For example, to properly configure [[*GnuPG][GPG]], I
+need to make sure that my [[*Shell][shell configuration]], [[*SSH][SSH configuration]], and
+[[*Emacs][Emacs configuration]] are all in sync (not to mention making sure the multiple
+GnuPG 2.1 configuration files aren’t contradictory).  To make it worse, lots of
+things depend on a properly configured GPG, and sometimes in subtle ways.  I
+need to keep all these assumptions in mind when I modify my GPG configuration,
+and that can affect the way I structure my GPG configuration.  In particular, if
+I modify something incorrectly, I may (and have) ended up with a machine that
+mysteriously wouldn’t let me log in, or wouldn’t let me encrypt and decrypt
+files.  This is not something I enjoy fixing, especially when I have other, more
+pressing things to be doing.
 
-   Furthermore, this complexity multiplies as soon as I try to support multiple
-   hosts with different software installed.  On my primary laptop, for instance,
-   I have X11 installed; I want [[*X11][X11 configuration]], and that means modifying my
-   [[*Shell][shell configuration files]].  On my server, though, I don’t have (or want) X11
-   installed; I still want a lot of my [[*Shell][shell configuration]], though.  I could
-   maintain separate versions of the shell configuration, but that would been
-   keeping several almost-identical versions in sync, and that’s certain to
-   result in problems down the line.
+Furthermore, this complexity multiplies as soon as I try to support multiple
+hosts with different software installed.  On my primary laptop, for instance, I
+have X11 installed; I want [[*X11][X11 configuration]], and that means modifying my [[*Shell][shell
+configuration files]].  On my server, though, I don’t have (or want) X11
+installed; I still want a lot of my [[*Shell][shell configuration]], though.  I could
+maintain separate versions of the shell configuration, but that would been
+keeping several almost-identical versions in sync, and that’s certain to result
+in problems down the line.
 
-   What if, though, I take the Literate Programming model I’ve been using to
-   maintain my Emacs configuration and apply it to UNIX dotfiles?  This allows
-   me to centralize all my configuration, describe why my configuration looks
-   the way it does, and specify parameters during the process of tangling that
-   allows me to generate different hosts’ configurations, using different
-   subsets of the configuration in this file.  This doesn’t work perfectly, but
-   it’s a big step up from how it was before.
+What if, though, I take the Literate Programming model I’ve been using to
+maintain my Emacs configuration and apply it to UNIX dotfiles?  This allows me
+to centralize all my configuration, describe why my configuration looks the way
+it does, and specify parameters during the process of tangling that allows me to
+generate different hosts’ configurations, using different subsets of the
+configuration in this file.  This doesn’t work perfectly, but it’s a big step up
+from how it was before.
 
-   Putting this altogether, Literate Dotfiles allow me to solve the following
-   problems:
+Putting this altogether, Literate Dotfiles allow me to solve the following
+problems:
 
-   - I can explain exactly why my configuration is the way it is inline with the
-     actual configuration,
+  - I can explain exactly why my configuration is the way it is inline with the
+    actual configuration,
 
-   - I can group related configurations right next to each other in this Org
-     file, regardless of whether they are spread across multiple physical
-     configuration files for different software, and
+  - I can group related configurations right next to each other in this Org
+    file, regardless of whether they are spread across multiple physical
+    configuration files for different software, and
 
-   - I can hyperlink between configurations that depend on one another when they
-     cannot or should not be grouped together in this Org file.
+  - I can hyperlink between configurations that depend on one another when they
+    cannot or should not be grouped together in this Org file.
 
-   Literate Dotfiles is not a completely novel idea ([[https://github.com/howardabrams/dot-files][Howard Abrams’ dotfiles]] and
-   [[http://keifer.link/projects/dotfiles/dotfiles.html][Keifer Miller’s dotfiles]] are excellent prior art), but it is not a very
-   common idea, and many of the so-called “literate” dotfiles are merely blocks
-   of code organized by headers—something that I can already do with comments
-   and that does not warrant the added complexity of tangling the dotfiles in
-   Org mode.  In particular, and I write this mostly as a warning to myself, I
-   do not want my dotfiles to look like [[https://github.com/ivoarch/.dot-org-files][those in this repository]] or [[https://github.com/mgdelacroix/dotfiles][this
-   repository]].  It’s easy to get fall into this trap, but there is nothing
-   “literate” about these, and I get almost nothing of the benefits I’ve
-   described above.
+Literate Dotfiles is not a completely novel idea ([[https://github.com/howardabrams/dot-files][Howard Abrams’ dotfiles]] and
+[[http://keifer.link/projects/dotfiles/dotfiles.html][Keifer Miller’s dotfiles]] are excellent prior art), but it is not a very common
+idea, and many of the so-called “literate” dotfiles are merely blocks of code
+organized by headers—something that I can already do with comments and that does
+not warrant the added complexity of tangling the dotfiles in Org mode.  In
+particular, and I write this mostly as a warning to myself, I do not want my
+dotfiles to look like [[https://github.com/ivoarch/.dot-org-files][those in this repository]] or [[https://github.com/mgdelacroix/dotfiles][this repository]].  It’s easy to
+get fall into this trap, but there is nothing “literate” about these, and I get
+almost nothing of the benefits I’ve described above.
 
 ** License
 
-   [[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotfiles are /not/ meant to be forked]], but I have no problem with anyone
-   taking inspiration from this configuration.  In particular, I hope that the
-   prose in this file will help point out pitfalls that you may not be aware of.
-   I’m not much a fan of copy-paste configuration, as it’s just as great a way
-   of propagating problematic configuration as it is beneficial configuration.
-   I hope that the prose descriptions will help anyone looking through my
-   dotfiles.  I don’t think Literate Dotfiles are the best for everyone, but it
-   does have the nice benefit of making dotfiles easy to understand.
+[[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotfiles are /not/ meant to be forked]], but I have no problem with anyone taking
+inspiration from this configuration.  In particular, I hope that the prose in
+this file will help point out pitfalls that you may not be aware of.  I’m not
+much a fan of copy-paste configuration, as it’s just as great a way of
+propagating problematic configuration as it is beneficial configuration.  I hope
+that the prose descriptions will help anyone looking through my dotfiles.  I
+don’t think Literate Dotfiles are the best for everyone, but it does have the
+nice benefit of making dotfiles easy to understand.
 
-   [[http://i.creativecommons.org/p/zero/1.0/88x31.png]]
+[[http://i.creativecommons.org/p/zero/1.0/88x31.png]]
 
-   With that said, I do not want to place any restrictions on the use of the
-   tangled dotfiles or weaved documentation.  As such, to the extent possible
-   under law, I have waived all copyright and related or neighboring rights to
-   this work.  Please see the [[http://creativecommons.org/publicdomain/zero/1.0/][Creative Commons Zero 1.0]] license for details.
+With that said, I do not want to place any restrictions on the use of the
+tangled dotfiles or weaved documentation.  As such, to the extent possible under
+law, I have waived all copyright and related or neighboring rights to this work.
+Please see the [[http://creativecommons.org/publicdomain/zero/1.0/][Creative Commons Zero 1.0]] license for details.
 
 ** Considerations
 
-   I need to make some minimal assumptions about the systems I’m running on.
-   Nowadays, if I stick to GNU/Linux, I can assume [[https://wiki.freedesktop.org/www/Software/systemd/][Systemd]] is the init system.
-   Systemd has some very nice features, but the most relevant here is the
-   ability to run [[https://wiki.archlinux.org/index.php/Systemd/User][per-user Systemd instances]].  This allows me to manage certain
-   tasks that I might otherwise have needed to use cron or a ~$HOME/.bashrc~ for
-   in the same way I can manage system services, with all the same process
-   tracking benefits.  While this will make porting this dotfiles master file to
-   something like Mac OS X or FreeBSD more difficult, I think this is a
-   worthwhile price to pay for the moment, as I am almost exclusively using
-   GNU/Linux systems, and I can live without a lot of these when I’m on a
-   Macintosh or *BSD system.
+I need to make some minimal assumptions about the systems I’m running on.
+Nowadays, if I stick to GNU/Linux, I can assume [[https://wiki.freedesktop.org/www/Software/systemd/][Systemd]] is the init system.
+Systemd has some very nice features, but the most relevant here is the ability
+to run [[https://wiki.archlinux.org/index.php/Systemd/User][per-user Systemd instances]].  This allows me to manage certain tasks that
+I might otherwise have needed to use cron or a ~$HOME/.bashrc~ for in the same
+way I can manage system services, with all the same process tracking benefits.
+While this will make porting this dotfiles master file to something like Mac OS
+X or FreeBSD more difficult, I think this is a worthwhile price to pay for the
+moment, as I am almost exclusively using GNU/Linux systems, and I can live
+without a lot of these when I’m on a Macintosh or *BSD system.
 
-   On top of this, I have a few requirements of my own for my dotfiles:
+On top of this, I have a few requirements of my own for my dotfiles:
 
-   1. We live in a sad world where dotfiles clutter the ~$HOME~ directory.  This
-      makes them hard to manage, hard to move, and hard to differentiate from
-      transient data or application save data.  Although the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base
-      Directories Specification]] aims to fix this by creating separate
-      directories for config (generally read-only), data (generally read-write),
-      and cache (safe to delete), there are many pieces of software that don’t
-      follow it by default and have to be coddled into doing so using
-      environment or special command line flags.  This is unfortunate, but it’s
-      more important to me to keep my ~$HOME~ directory as clean as I can.  Here
-      are some links that describe how to do this:
-      - Super User: [[https://superuser.com/questions/874901/what-are-the-step-to-move-all-your-dotfiles-into-xdg-directories][What are the step to move all your dotfiles into XDG
-        directories?]]
-      - [[https://github.com/grawity/dotfiles/blob/master/.dotfiles.notes][grawity Dotfile Notes]]
-      - [[https://lxl.io/xdg-config-home][Move your config files to ~$XDG_CONFIG_HOME~]] by Philipp Schmitt
-      - [[https://github.com/woegjiub/.config/blob/master/sh/xdg.sh][woegjiub ~xdg.sh~ script]]
-      - Arch Linux Forums [[https://wiki.archlinux.org/index.php/XDG_Base_Directory_support][XDG Base Directory support]]
-   2. Sometimes I install software under the ~$HOME/.local~ tree, so I want to
-      make sure the ~$PATH~ and all related variables will look in the right
-      place for binaries, manpages, headers, libraries, and so forth.
+  1. We live in a sad world where dotfiles clutter the ~$HOME~ directory.  This
+     makes them hard to manage, hard to move, and hard to differentiate from
+     transient data or application save data.  Although the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directories
+     Specification]] aims to fix this by creating separate directories for config
+     (generally read-only), data (generally read-write), and cache (safe to
+     delete), there are many pieces of software that don’t follow it by default
+     and have to be coddled into doing so using environment or special command
+     line flags.  This is unfortunate, but it’s more important to me to keep my
+     ~$HOME~ directory as clean as I can.  Here are some links that describe how
+     to do this:
+       - Super User: [[https://superuser.com/questions/874901/what-are-the-step-to-move-all-your-dotfiles-into-xdg-directories][What are the step to move all your dotfiles into XDG
+         directories?]]
+       - [[https://github.com/grawity/dotfiles/blob/master/.dotfiles.notes][grawity Dotfile Notes]]
+       - [[https://lxl.io/xdg-config-home][Move your config files to ~$XDG_CONFIG_HOME~]] by Philipp Schmitt
+       - [[https://github.com/woegjiub/.config/blob/master/sh/xdg.sh][woegjiub ~xdg.sh~ script]]
+       - Arch Linux Forums [[https://wiki.archlinux.org/index.php/XDG_Base_Directory_support][XDG Base Directory support]]
+  2. Sometimes I install software under the ~$HOME/.local~ tree, so I want to
+     make sure the ~$PATH~ and all related variables will look in the right
+     place for binaries, manpages, headers, libraries, and so forth.
 
 * Shell
 
-  The UNIX shell is at the center of the UNIX CLI experience, so it makes sense
-  to begin with this.  There are two particular shells I care about: Bash and
-  standard POSIX shell.  The former is what I use for interactive shells outside
-  of Emacs, whereas the latter is what I strive to write my scripts for (so,
-  among other things, they support *BSDs and other UNIXen without modification).
-  This configuration is structured so that I can configure both—although I keep
-  POSIX shell completely vanilla with regard to its functionality, so I don’t
-  get any unexpected surprises when moving my scripts to a new host.
+The UNIX shell is at the center of the UNIX CLI experience, so it makes sense to
+begin with this.  There are two particular shells I care about: Bash and
+standard POSIX shell.  The former is what I use for interactive shells outside
+of Emacs, whereas the latter is what I strive to write my scripts for (so, among
+other things, they support *BSDs and other UNIXen without modification).  This
+configuration is structured so that I can configure both—although I keep POSIX
+shell completely vanilla with regard to its functionality, so I don’t get any
+unexpected surprises when moving my scripts to a new host.
 
-  On Debian systems, the POSIX shell is [[http://gondor.apana.org.au/~herbert/dash/][Dash, the Debian Almquist Shell]], by
-  default.  This shell is POSIX compliant and very lightweight.  Other systems
-  use [[https://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html][Bash as the POSIX shell]], which, as long its configured correctly, is also
-  fine.
+On Debian systems, the POSIX shell is [[http://gondor.apana.org.au/~herbert/dash/][Dash, the Debian Almquist Shell]], by
+default.  This shell is POSIX compliant and very lightweight.  Other systems use
+[[https://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html][Bash as the POSIX shell]], which, as long its configured correctly, is also fine.
 
-  To orient readers, my shell configuration is similar to that described in the
-  article [[https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789#.a9jfn51ix][_Getting Started With Dotfiles_]], by Lars Kappert.
+To orient readers, my shell configuration is similar to that described in the
+article [[https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789#.a9jfn51ix][_Getting Started With Dotfiles_]], by Lars Kappert.
 
 ** Shell Configuration Files
 
-   Shell configuration is done in three files, whose semantics are described
-   below:
+Shell configuration is done in three files, whose semantics are described below:
 
-   - ~.profile~ :: This file is sourced by a login shell, which is the root
-        process of almost everything run by the user (with the exception of
-        Systemd units and cron jobs, which are run from a daemon not spawned
-        from the login shell).  Because all shells, not just Bash, source this
-        file, we want to avoid anything Bash-specific here.
+  - ~.profile~ :: This file is sourced by a login shell, which is the root
+    process of almost everything run by the user (with the exception of Systemd
+    units and cron jobs, which are run from a daemon not spawned from the login
+    shell).  Because all shells, not just Bash, source this file, we want to
+    avoid anything Bash-specific here.
 
-   - ~.bashrc~ :: This file is sourced by interactive Bash shells *that are not
-        login shells*, so it should contain only configuration that we use while
-        interacting with a shell (as opposed to, for example, configuration that
-        might affect shell scripts).  These are mostly conveniences, and are
-        necessarily Bash-specific.
+  - ~.bashrc~ :: This file is sourced by interactive Bash shells *that are not
+    login shells*, so it should contain only configuration that we use while
+    interacting with a shell (as opposed to, for example, configuration that
+    might affect shell scripts).  These are mostly conveniences, and are
+    necessarily Bash-specific.
 
-   - ~.bash_profile~ :: This file is sourced by Bash in priority to ~.profile~
-        for login shells, but is otherwise the same.
+  - ~.bash_profile~ :: This file is sourced by Bash in priority to ~.profile~
+    for login shells, but is otherwise the same.
 
-   The above descriptions lead to the following plan: we will use ~.profile~ for
-   one-time configuration for each login, such as environment variables that are
-   needed by every program; ~.bashrc~ will contain Bash-specific configuration
-   that is sourced by every new interactive shell (things like aliases and
-   functions, which aren’t inherited by subshells anyway); ~.bash_profile~ will
-   simply source both ~.profile~ and ~.bashrc~, which means interactive Bash
-   login shells will have both the non-Bash-specific configurations and the
-   Bash-specific configurations.
+The above descriptions lead to the following plan: we will use ~.profile~ for
+one-time configuration for each login, such as environment variables that are
+needed by every program; ~.bashrc~ will contain Bash-specific configuration that
+is sourced by every new interactive shell (things like aliases and functions,
+which aren’t inherited by subshells anyway); ~.bash_profile~ will simply source
+both ~.profile~ and ~.bashrc~, which means interactive Bash login shells will
+have both the non-Bash-specific configurations and the Bash-specific
+configurations.
 
-   So, let’s take a look at these three configuration files:
+So, let’s take a look at these three configuration files:
 
-   #+CAPTION: Source listing for ~.profile~.
-   #+BEGIN_SRC sh   :tangle sh/.profile   :noweb yes   :shebang "#!/bin/sh\n"
-     # Source installed login shell configurations:
-     <<sh-profile>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.profile~.
+#+BEGIN_SRC sh   :tangle sh/.profile   :noweb yes   :shebang "#!/bin/sh\n"
+  # Source installed login shell configurations:
+  <<sh-profile>>
+#+END_SRC
 
-   #+CAPTION: Source listing for ~.bashrc~.
-   #+BEGIN_SRC sh   :tangle sh/.bashrc   :noweb yes   :shebang "#!/bin/bash\n"
-     # Source installed interactive shell configurations:
-     <<sh-bashrc>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.bashrc~.
+#+BEGIN_SRC sh   :tangle sh/.bashrc   :noweb yes   :shebang "#!/bin/bash\n"
+  # Source installed interactive shell configurations:
+  <<sh-bashrc>>
+#+END_SRC
 
-   #+CAPTION: Source listing for ~.bash_profile~.
-   #+BEGIN_SRC sh   :tangle sh/.bash_profile   :noweb yes   :shebang "#!/bin/bash\n"
-     # Source login shell configuration:
-     . .profile
+#+CAPTION: Source listing for ~.bash_profile~.
+#+BEGIN_SRC sh   :tangle sh/.bash_profile   :noweb yes   :shebang "#!/bin/bash\n"
+  # Source login shell configuration:
+  . .profile
 
-     # Only source .bashrc when shell is interactive:
-     case "$-" in *i*) . .bashrc ;; esac
-   #+END_SRC
+  # Only source .bashrc when shell is interactive:
+  case "$-" in *i*) . .bashrc ;; esac
+#+END_SRC
 
 ** XDG Base Directories
 
-   The XDG Base Directory variables define where configuration, cache, and data
-   files for the user should be stored.  While this has the nice effect of
-   cleaning up the home directory, moving dotfiles into subdirectories
-   (something I like very much), it has an even more important benefit: because
-   it separates configuration files, cache files, and important data files into
-   separate folders, it greatly simplifies backup and recovery of these files.
-   Migrating to a new laptop, for instance, should be as simple as installing
-   the software and copying over the configuration and data.  With the typical
-   dotfiles approach, there’s nothing that prevents cached data—data that isn’t
-   essential and could potentially contain system-specific data that would not
-   transfer well—from being written straight to the home directory.  In essence,
-   this mirrors quite closely how UNIX systems break the file system into
-   directories that store configuration (~/etc~), cached data (~/var~), shared
-   data (~/usr/share~), and so forth.
+The XDG Base Directory variables define where configuration, cache, and data
+files for the user should be stored.  While this has the nice effect of cleaning
+up the home directory, moving dotfiles into subdirectories (something I like
+very much), it has an even more important benefit: because it separates
+configuration files, cache files, and important data files into separate
+folders, it greatly simplifies backup and recovery of these files.  Migrating to
+a new laptop, for instance, should be as simple as installing the software and
+copying over the configuration and data.  With the typical dotfiles approach,
+there’s nothing that prevents cached data—data that isn’t essential and could
+potentially contain system-specific data that would not transfer well—from being
+written straight to the home directory.  In essence, this mirrors quite closely
+how UNIX systems break the file system into directories that store configuration
+(~/etc~), cached data (~/var~), shared data (~/usr/share~), and so forth.
 
-   Let’s create a file ~$HOME/.config/sh/xdg.sh~ that, when sourced, sets these
-   variables correctly.  The full listing of this file is shown below:
+Let’s create a file ~$HOME/.config/sh/xdg.sh~ that, when sourced, sets these
+variables correctly.  The full listing of this file is shown below:
 
-   #+CAPTION: Source listing for ~.config/sh/xdg.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/xdg.sh   :noweb yes   :shebang "#!/bin/sh\n"
-     <<sh-xdg>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.config/sh/xdg.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/xdg.sh   :noweb yes   :shebang "#!/bin/sh\n"
+  <<sh-xdg>>
+#+END_SRC
 
-   We also want this to be sourced by our ~.profile~, so we add the following
-   line there:
+We also want this to be sourced by our ~.profile~, so we add the following line
+there:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/xdg.sh ] && . $HOME/.config/sh/xdg.sh
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
+  [ -r $HOME/.config/sh/xdg.sh ] && . $HOME/.config/sh/xdg.sh
+#+END_SRC
 
-   But what are the variables we need to configure?  The [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory
-   specification]] lists the following environment variables:
+But what are the variables we need to configure?  The [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory
+specification]] lists the following environment variables:
 
-   #+BEGIN_QUOTE
-     - There is a single base directory relative to which user-specific data
-       files should be written. This directory is defined by the environment
-       variable ~$XDG_DATA_HOME~.
+#+BEGIN_QUOTE
+  - There is a single base directory relative to which user-specific data files
+    should be written. This directory is defined by the environment variable
+    ~$XDG_DATA_HOME~.
 
-     - There is a single base directory relative to which user-specific
-       configuration files should be written. This directory is defined by the
-       environment variable ~$XDG_CONFIG_HOME~.
+  - There is a single base directory relative to which user-specific
+    configuration files should be written. This directory is defined by the
+    environment variable ~$XDG_CONFIG_HOME~.
 
-     - There is a single base directory relative to which user-specific
-       executable files should be written. This directory is defined by the
-       environment variable ~$XDG_BIN_HOME~.
+  - There is a single base directory relative to which user-specific executable
+    files should be written. This directory is defined by the environment
+    variable ~$XDG_BIN_HOME~.
 
-     - There is a single base directory relative to which user-specific
-       architecture-independent library files shoule be written. This directory
-       is defined by the environment variable ~$XDG_LIB_HOME~.
+  - There is a single base directory relative to which user-specific
+    architecture-independent library files shoule be written. This directory is
+    defined by the environment variable ~$XDG_LIB_HOME~.
 
-     - There is a set of preference ordered base directories relative to which
-       executable files should be searched. This set of directories is defined
-       by the environment variable ~$XDG_BIN_DIRS~.
+  - There is a set of preference ordered base directories relative to which
+    executable files should be searched. This set of directories is defined by
+    the environment variable ~$XDG_BIN_DIRS~.
 
-     - There is a set of preference ordered base directories relative to which
-       library files should be searched. This set of directories is defined by
-       the environment variable ~$XDG_LIB_DIRS~.
+  - There is a set of preference ordered base directories relative to which
+    library files should be searched. This set of directories is defined by
+    the environment variable ~$XDG_LIB_DIRS~.
 
-     - There is a set of preference ordered base directories relative to which
-       data files should be searched. This set of directories is defined by the
-       environment variable ~$XDG_DATA_DIRS~.
+  - There is a set of preference ordered base directories relative to which data
+    files should be searched. This set of directories is defined by the
+    environment variable ~$XDG_DATA_DIRS~.
 
-     - There is a set of preference ordered base directories relative to which
-       configuration files should be searched. This set of directories is
-       defined by the environment variable ~$XDG_CONFIG_DIRS~.
+  - There is a set of preference ordered base directories relative to which
+    configuration files should be searched. This set of directories is defined
+    by the environment variable ~$XDG_CONFIG_DIRS~.
 
-     - There is a single base directory relative to which user-specific
-       non-essential (cached) data should be written. This directory is defined
-       by the environment variable ~$XDG_CACHE_HOME~.
+  - There is a single base directory relative to which user-specific
+    non-essential (cached) data should be written. This directory is defined by
+    the environment variable ~$XDG_CACHE_HOME~.
 
-     - There is a single base directory relative to which user-specific runtime
-       files and other file objects should be placed. This directory is defined
-       by the environment variable ~$XDG_RUNTIME_DIR~.
-   #+END_QUOTE
+  - There is a single base directory relative to which user-specific runtime
+    files and other file objects should be placed. This directory is defined by
+    the environment variable ~$XDG_RUNTIME_DIR~.
+#+END_QUOTE
 
-   The variables ~$XDG_BIN_DIRS~, ~$XDG_LIB_DIRS~, ~$XDG_DATA_DIRS~, and
-   ~$XDG_CONFIG_DIRS~ contain system paths, and they should be set by the system
-   (or applications should use the defaults defined in the specification).
-   Furthermore, [[http://www.freedesktop.org/software/systemd/man/pam_systemd.html][~$XDG_RUNTIME_DIR~ is set by the Systemd PAM module]], so we don’t
-   need, or want, to set it by ourselves.
+The variables ~$XDG_BIN_DIRS~, ~$XDG_LIB_DIRS~, ~$XDG_DATA_DIRS~, and
+~$XDG_CONFIG_DIRS~ contain system paths, and they should be set by the system
+(or applications should use the defaults defined in the specification).
+Furthermore, [[http://www.freedesktop.org/software/systemd/man/pam_systemd.html][~$XDG_RUNTIME_DIR~ is set by the Systemd PAM module]], so we don’t
+need, or want, to set it by ourselves.
 
-   The remaining variables (namely, ~$XDG_DATA_HOME~, ~$XDG_CONFIG_HOME~,
-   ~$XDG_BIN_HOME~, ~$XDG_LIB_HOME~, and ~$XDG_CACHE_HOME~), though, should be
-   set in our shell configuration.  I use the following, which happen to be the
-   defaults anyway:
+The remaining variables (namely, ~$XDG_DATA_HOME~, ~$XDG_CONFIG_HOME~,
+~$XDG_BIN_HOME~, ~$XDG_LIB_HOME~, and ~$XDG_CACHE_HOME~), though, should be set
+in our shell configuration.  I use the following, which happen to be the
+defaults anyway:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
-     # XDG Basedir variables
-   #+END_SRC
-   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n\n"
-     export XDG_DATA_HOME="$HOME/.local/share"
-     export XDG_CONFIG_HOME="$HOME/.config"
-     export XDG_BIN_HOME="$HOME/.local/bin"
-     export XDG_LIB_HOME="$HOME/.local/lib"
-     export XDG_CACHE_HOME="$HOME/.cache"
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
+  # XDG Basedir variables
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n\n"
+  export XDG_DATA_HOME="$HOME/.local/share"
+  export XDG_CONFIG_HOME="$HOME/.config"
+  export XDG_BIN_HOME="$HOME/.local/bin"
+  export XDG_LIB_HOME="$HOME/.local/lib"
+  export XDG_CACHE_HOME="$HOME/.cache"
+#+END_SRC
 
-   As a note, we have to be careful, as the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory Specification]]
-   requires us to use absolute paths.  Here, we do this by using double-quoting,
-   which interpolates the ~$HOME~ variable into the path for us.  Because
-   ~$HOME~ is an absolute path, the resulting paths will all be absolute, too.
+As a note, we have to be careful, as the [[https://theos.kyriasis.com/~kyrias/basedir-spec.html][XDG Base Directory Specification]]
+requires us to use absolute paths.  Here, we do this by using double-quoting,
+which interpolates the ~$HOME~ variable into the path for us.  Because ~$HOME~
+is an absolute path, the resulting paths will all be absolute, too.
 
-   The semantics of these environment variables naturally lead us to a backup
-   and recovery strategy:
+The semantics of these environment variables naturally lead us to a backup and
+recovery strategy:
 
-   - ~$XDG_DATA_HOME~ contains user-specific data, so we generally want to back
-     it up.  Not all of the data in this directory is important, but some is.
-     This may contain sensitive information, so we should encrypt our backups.
+  - ~$XDG_DATA_HOME~ contains user-specific data, so we generally want to back
+    it up.  Not all of the data in this directory is important, but some is.
+    This may contain sensitive information, so we should encrypt our backups.
 
-   - ~$XDG_CONFIG_HOME~ contains user-specific configuration, which we want to
-     back up.  Hopefully, this contains no sensitive information, but I don’t
-     trust that no passwords or secrets will make it into this, so we encrypt
-     the backups just in case.
+  - ~$XDG_CONFIG_HOME~ contains user-specific configuration, which we want to
+    back up.  Hopefully, this contains no sensitive information, but I don’t
+    trust that no passwords or secrets will make it into this, so we encrypt the
+    backups just in case.
 
-   - ~$XDG_BIN_HOME~ and ~$XDG_LIB_HOME~ are for user-installed software that
-     may be system-specific, so we don’t want to back it up.  To recover, we
-     need to reinstall the software.
+  - ~$XDG_BIN_HOME~ and ~$XDG_LIB_HOME~ are for user-installed software that may
+    be system-specific, so we don’t want to back it up.  To recover, we need to
+    reinstall the software.
 
-   - ~$XDG_CACHE_HOME~ is non-essential data, files that store information
-     locally for performance.  These can be deleted at any time, and could go
-     out-of-date, so there is no point in backing them up.  Software that uses
-     these should regenerate them on its own.
+  - ~$XDG_CACHE_HOME~ is non-essential data, files that store information
+    locally for performance.  These can be deleted at any time, and could go
+    out-of-date, so there is no point in backing them up.  Software that uses
+    these should regenerate them on its own.
 
-   While just configuring this should be enough, it’s not.  There is an annoying
-   amount of software that does not use these directories properly, or at all.
-   We do our best here to configure the problematic software to use them, but we
-   can’t get all of it.
+While just configuring this should be enough, it’s not.  There is an annoying
+amount of software that does not use these directories properly, or at all.  We
+do our best here to configure the problematic software to use them, but we can’t
+get all of it.
 
-   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
-     # Per-software configuration to use XDG basedirs
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"   :exports none
+  # Per-software configuration to use XDG basedirs
+#+END_SRC
 
-   TeX stores its cache right under the home directory by default, so we set the
-   following environment variable to move it to the cache directory:
+TeX stores its cache right under the home directory by default, so we set the
+following environment variable to move it to the cache directory:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
-     export TEXMFVAR="$XDG_CACHE_HOME/texmf-var"
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
+  export TEXMFVAR="$XDG_CACHE_HOME/texmf-var"
+#+END_SRC
 
 ** Miscellaneous Environment Variables
 
-   The remaining environment variables are either set in or conditionally
-   sourced from ~$HOME/.config/sh/env.sh~.  A full listing of this file is shown
-   below:
+The remaining environment variables are either set in or conditionally sourced
+from ~$HOME/.config/sh/env.sh~.  A full listing of this file is shown below:
 
-   #+CAPTION: Source listing for ~.config/sh/env.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/env.sh   :noweb yes   :shebang "#!/bin/sh\n"
-     <<sh-env>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.config/sh/env.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/env.sh   :noweb yes   :shebang "#!/bin/sh\n"
+  <<sh-env>>
+#+END_SRC
 
-   We want these environment variables to be available in all sessions, so we
-   want to source it from our ~.profile~, as well.  We add the following line
-   there to do that:
+We want these environment variables to be available in all sessions, so we want
+to source it from our ~.profile~, as well.  We add the following line there to
+do that:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/env.sh ] && . $HOME/.config/sh/env.sh
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-profile   :noweb-sep "\n"
+  [ -r $HOME/.config/sh/env.sh ] && . $HOME/.config/sh/env.sh
+#+END_SRC
 
 *** Local Installation Tree
 
-   In addition to (or perhaps complementary to) the [[*XDG Base Directories][XDG Base Directories]], we
-   also use the ~.local~ tree as an install path for user-local software.
-   Because ~.local~ mirrors ~/usr~, this works very well.  It’s not quite as
-   simple as adding the binary path to ~$PATH~, though.  There are a number of
-   variables we need to set for the software to work correctly.
+In addition to (or perhaps complementary to) the [[*XDG Base Directories][XDG Base Directories]], we also
+use the ~.local~ tree as an install path for user-local software.  Because
+~.local~ mirrors ~/usr~, this works very well.  It’s not quite as simple as
+adding the binary path to ~$PATH~, though.  There are a number of variables we
+need to set for the software to work correctly.
 
-   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n" :exports none
-     # Add software installed under `~/.local` tree.
-   #+END_SRC
-   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
-     LOCAL_PREFIX="$HOME/.local"
-     export PATH="$LOCAL_PREFIX/bin:$PATH"
-     export MANPATH="$LOCAL_PREFIX/share/man:$MANPATH"
-     export CFLAGS="-I$LOCAL_PREFIX/include $CFLAGS"
-     export CXXFLAGS="-I$LOCAL_PREFIX/include $CXXFLAGS"
-     export LDFLAGS="-L$LOCAL_PREFIX/lib -Wl,-rpath,$LOCAL_PREFIX/lib $LDFLAGS"
-     export LD_RUNPATH="$LOCAL_PREFIX/lib:$LD_RUNPATH"
-     export PKG_CONFIG_PATH="$LOCAL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
-     export ACLOCAL_FLAGS="-I $LOCAL_PREFIX/share/aclocal/"
-     unset LOCAL_PREFIX
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n" :exports none
+  # Add software installed under `~/.local` tree.
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+  LOCAL_PREFIX="$HOME/.local"
+  export PATH="$LOCAL_PREFIX/bin:$PATH"
+  export MANPATH="$LOCAL_PREFIX/share/man:$MANPATH"
+  export CFLAGS="-I$LOCAL_PREFIX/include $CFLAGS"
+  export CXXFLAGS="-I$LOCAL_PREFIX/include $CXXFLAGS"
+  export LDFLAGS="-L$LOCAL_PREFIX/lib -Wl,-rpath,$LOCAL_PREFIX/lib $LDFLAGS"
+  export LD_RUNPATH="$LOCAL_PREFIX/lib:$LD_RUNPATH"
+  export PKG_CONFIG_PATH="$LOCAL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+  export ACLOCAL_FLAGS="-I $LOCAL_PREFIX/share/aclocal/"
+  unset LOCAL_PREFIX
+#+END_SRC
 
 ** Aliases
 
-   I store aliases in the ~$HOME/.config/sh/alias.sh~ file.  These aliases apply
-   only to interactive shells, not to scripts, so all these aliases are only to
-   help me in interactive shells.  Here is a full listing of that file:
+I store aliases in the ~$HOME/.config/sh/alias.sh~ file.  These aliases apply
+only to interactive shells, not to scripts, so all these aliases are only to
+help me in interactive shells.  Here is a full listing of that file:
 
-   #+CAPTION: Source listing for ~.config/sh/alias.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/alias.sh   :noweb yes   :shebang "#!/bin/sh\n"
-     <<sh-alias>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.config/sh/alias.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/alias.sh   :noweb yes   :shebang "#!/bin/sh\n"
+  <<sh-alias>>
+#+END_SRC
 
-   We also want to make sure to source this file from ~.bashrc~:
+We also want to make sure to source this file from ~.bashrc~:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/alias.sh    ] && . $HOME/.config/sh/alias.sh
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+  [ -r $HOME/.config/sh/alias.sh    ] && . $HOME/.config/sh/alias.sh
+#+END_SRC
 
-   The default ~ls~ does not automatically print its results in color when the
-   terminal supports it, and it gives rather unhelpful values for file sizes.
-   For usability, we change the default in interactive shells to use color
-   whenever the output terminal supports it and to display file sizes in
-   human-readable format (e.g., ~1K~, ~234M~, ~2G~).  Once we’ve done that, we
-   can also add the common and useful ~ll~ alias, which displays a long listing
-   format, sorted with directories first.
+The default ~ls~ does not automatically print its results in color when the
+terminal supports it, and it gives rather unhelpful values for file sizes.  For
+usability, we change the default in interactive shells to use color whenever the
+output terminal supports it and to display file sizes in human-readable format
+(e.g., ~1K~, ~234M~, ~2G~).  Once we’ve done that, we can also add the common
+and useful ~ll~ alias, which displays a long listing format, sorted with
+directories first.
 
-   #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
-     # ls usability aliases
-   #+END_SRC
-   #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
-     alias ls="ls -h --color=auto"
-     alias ll="ls -lv --group-directories-first"
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
+  # ls usability aliases
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
+  alias ls="ls -h --color=auto"
+  alias ll="ls -lv --group-directories-first"
+#+END_SRC
 
-   We also [[*Emacs][define some aliases]] to easily start Emacs from the terminal.
+We also [[*Emacs][define some aliases]] to easily start Emacs from the terminal.
 
 ** Functions
 
-   In addition to aliases, I use some shell functions for functionality that is
-   more complicated than what aliases can provide but not complicated enough to
-   warrant a separate shell script.  These functions are stored in
-   ~$HOME/.config/sh/function.sh~, reproduced below:
+In addition to aliases, I use some shell functions for functionality that is
+more complicated than what aliases can provide but not complicated enough to
+warrant a separate shell script.  These functions are stored in
+~$HOME/.config/sh/function.sh~, reproduced below:
 
-   #+CAPTION: Source listing for ~.config/sh/function.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/function.sh   :noweb yes   :shebang "#!/bin/sh\n"
-     <<sh-function>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.config/sh/function.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/function.sh   :noweb yes   :shebang "#!/bin/sh\n"
+  <<sh-function>>
+#+END_SRC
 
-   Again, we source it from ~.bashrc~:
+Again, we source it from ~.bashrc~:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/function.sh ] && . $HOME/.config/sh/function.sh
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+  [ -r $HOME/.config/sh/function.sh ] && . $HOME/.config/sh/function.sh
+#+END_SRC
 
-   The functions I use most commonly manage my ~$PATH~ variable, the environment
-   variable that contains a colon-separated list of directories in which to look
-   for a command to be executed.  Modifying it manually—especially removing
-   directories from it—is tedious and error-prone; these functions, which I
-   found on [[https://stackoverflow.com/questions/370047/][a StackOverflow question]], have served we well:
+The functions I use most commonly manage my ~$PATH~ variable, the environment
+variable that contains a colon-separated list of directories in which to look
+for a command to be executed.  Modifying it manually—especially removing
+directories from it—is tedious and error-prone; these functions, which I found
+on [[https://stackoverflow.com/questions/370047/][a StackOverflow question]], have served we well:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-function   :noweb-sep "\n"   :exports none
-     # $PATH management functions
-   #+END_SRC
-   #+BEGIN_SRC sh   :noweb-ref sh-function   :noweb yes   :noweb-sep "\n\n"
-     path_append()  { path_remove $1; export PATH="$PATH:$1";   }
-     path_prepend() { path_remove $1; export PATH="$1:$PATH";   }
-     path_remove()  { export PATH=`<<sh-function-pathremove>>`; }
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-function   :noweb-sep "\n"   :exports none
+  # $PATH management functions
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-function   :noweb yes   :noweb-sep "\n\n"
+  path_append()  { path_remove $1; export PATH="$PATH:$1";   }
+  path_prepend() { path_remove $1; export PATH="$1:$PATH";   }
+  path_remove()  { export PATH=`<<sh-function-pathremove>>`; }
+#+END_SRC
 
-   The ~path_append()~ and ~path_prepend()~ functions are rather
-   self-explanatory, but the ~path_remove()~ function may not be.  In fact, it’s
-   slightly modified from the version in the StackOverflow question linked
-   above.  Let’s break it down.  Our goal is to export the ~$PATH~ variable to a
-   new value, so let’s look inside the backtick-quoted string to see what is
-   run:
+The ~path_append()~ and ~path_prepend()~ functions are rather self-explanatory,
+but the ~path_remove()~ function may not be.  In fact, it’s slightly modified
+from the version in the StackOverflow question linked above.  Let’s break it
+down.  Our goal is to export the ~$PATH~ variable to a new value, so let’s look
+inside the backtick-quoted string to see what is run:
 
-   1. First, we print out the current ~$PATH~, which we will use as input.  The
-      ~$PATH~ variable should not end in a newline, which gives us two options:
+  1. First, we print out the current ~$PATH~, which we will use as input.  The
+     ~$PATH~ variable should not end in a newline, which gives us two options:
 
-      - ~echo -n~, which is not completely portable, or
-      - ~printf~.
+       - ~echo -n~, which is not completely portable, or
+       - ~printf~.
 
-      In the name of portability, we will choose the later.
+     In the name of portability, we will choose the later.
 
-      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
-        printf '%s' "$PATH"
-      #+END_SRC
+     #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+       printf '%s' "$PATH"
+     #+END_SRC
 
-   2. We want to parse this output into a series of records separated by colons.
-      To this, we turn to awk.  The awk [[http://www.grymoire.com/Unix/Awk.html#uh-19][~RS~ variable]] stores the line/record
-      separator used in parsing, and the [[http://www.grymoire.com/Unix/Awk.html#uh-20][~ORS~ variable]] stores the line/record
-      separator used in printing.  We can use these two variables to piggyback
-      on awk’s parsing capabilities, setting both of them to colons.  Awk can
-      then loop over these parsed directory names to determine whether any of
-      them are the directory we are trying to remove.  If they are, we ignore
-      them.
+  2. We want to parse this output into a series of records separated by colons.
+     To this, we turn to awk.  The awk [[http://www.grymoire.com/Unix/Awk.html#uh-19][~RS~ variable]] stores the line/record
+     separator used in parsing, and the [[http://www.grymoire.com/Unix/Awk.html#uh-20][~ORS~ variable]] stores the line/record
+     separator used in printing.  We can use these two variables to piggyback on
+     awk’s parsing capabilities, setting both of them to colons.  Awk can then
+     loop over these parsed directory names to determine whether any of them are
+     the directory we are trying to remove.  If they are, we ignore them.
 
-      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
-        awk -v RS=: -v ORS=: '$0 != "'$1'"'
-      #+END_SRC
+     #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+       awk -v RS=: -v ORS=: '$0 != "'$1'"'
+     #+END_SRC
 
-      The expression here used to filter is a little opaque, but works as
-      follows:
+     The expression here used to filter is a little opaque, but works as
+     follows:
 
-      - We have an initial, single-quoted string in which the ~$0~ is an _awk_
-        variable meaning “this record”.  This string ends with a double quote.
+       - We have an initial, single-quoted string in which the ~$0~ is an _awk_
+         variable meaning “this record”.  This string ends with a double quote.
 
-      - Then, we have a _shell_ variable that interpolates to the first argument
-        to our function.
+       - Then, we have a _shell_ variable that interpolates to the first
+         argument to our function.
 
-      - Finally, we have a third string that closes the opening quote from the
-        first string.
+       - Finally, we have a third string that closes the opening quote from the
+         first string.
 
-   3. Unfortunately, awk outputs the value of ~ORS~ at the end of the string,
-      too, so we need to chop it off.  The following sed invocation does that:
+  3. Unfortunately, awk outputs the value of ~ORS~ at the end of the string,
+     too, so we need to chop it off.  The following sed invocation does that:
 
-      #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
-        sed 's/:$//'
-      #+END_SRC
+     #+BEGIN_SRC sh   :noweb-ref sh-function-pathremove   :noweb-sep " | "
+       sed 's/:$//'
+     #+END_SRC
 
 ** Bash Prompt
 
-   In order to configure our Bash prompt, we make a new file,
-   ~$HOME/.config/sh/prompt.sh~.  This file’s job is simply to set the prompt as
-   we want when it sourced.
+In order to configure our Bash prompt, we make a new file,
+~$HOME/.config/sh/prompt.sh~.  This file’s job is simply to set the prompt as we
+want when it sourced.
 
-   Bash prompt configuration is contained within the ~$PS1~ environment
-   variable, which is extremely terse and hard to work with.  The following is
-   my ~$PS1~ configuration:
+Bash prompt configuration is contained within the ~$PS1~ environment variable,
+which is extremely terse and hard to work with.  The following is my ~$PS1~
+configuration:
 
-   #+CAPTION: Source listing for ~.config/sh/prompt.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/prompt.sh   :noweb yes   :shebang "#!/bin/bash\n"
-     white='\e[0;37m'
-     greenbold='\e[01;32m'
-     bluebold='\e[01;34m'
-     reset='\e[0m'
+#+CAPTION: Source listing for ~.config/sh/prompt.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/prompt.sh   :noweb yes   :shebang "#!/bin/bash\n"
+  white='\e[0;37m'
+  greenbold='\e[01;32m'
+  bluebold='\e[01;34m'
+  reset='\e[0m'
 
-     # Set prompt
-     export PS1="<<sh-prompt>>"
+  # Set prompt
+  export PS1="<<sh-prompt>>"
 
-     # Set xterm title
-     case "$TERM" in
-         xterm*|rxvt*) export PS1="<<sh-prompt-title>>$PS1" ;;
-                    *) ;;
-     esac
+  # Set xterm title
+  case "$TERM" in
+      xterm*|rxvt*) export PS1="<<sh-prompt-title>>$PS1" ;;
+                 *) ;;
+  esac
 
-     unset white
-     unset greenbold
-     unset bluebold
-     unset reset
-   #+END_SRC
+  unset white
+  unset greenbold
+  unset bluebold
+  unset reset
+#+END_SRC
 
-   This will produce a shell prompt that looks as follows:
+This will produce a shell prompt that looks as follows:
 
-   #+BEGIN_EXAMPLE
-     hostname:~(0)$
-   #+END_EXAMPLE
+#+BEGIN_EXAMPLE
+  hostname:~(0)$
+#+END_EXAMPLE
 
-   The first few lines define ANSI color codes that we will use in the prompt.
-   Because these are unset later, we don’t need to worry about them polluting
-   the our environment when we source this file.  When we use these color codes,
-   we will enclose them in ~\[~ and ~\]~, which tell bash not to consider the
-   enclosing text when moving the cursor.  We can use the variables within our
-   ~$PS1~ variable, and they will be interpolated correctly within the
-   double-quoted string.
+The first few lines define ANSI color codes that we will use in the prompt.
+Because these are unset later, we don’t need to worry about them polluting the
+our environment when we source this file.  When we use these color codes, we
+will enclose them in ~\[~ and ~\]~, which tell bash not to consider the
+enclosing text when moving the cursor.  We can use the variables within our
+~$PS1~ variable, and they will be interpolated correctly within the
+double-quoted string.
 
-   Let’s break the prompt down some:
+Let’s break the prompt down some:
 
-   - We start out by resetting the color setting of the terminal, just in case
-     some rogue command does not clean up after itself:
+  - We start out by resetting the color setting of the terminal, just in case
+    some rogue command does not clean up after itself:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
-       \[$reset\]
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+      \[$reset\]
+    #+END_SRC
 
-   - The next part of the ~$PS1~ variable prints out the hostname (~\h~) in a
-     bold, green color, and then prints out a white colon:
+  - The next part of the ~$PS1~ variable prints out the hostname (~\h~) in a
+    bold, green color, and then prints out a white colon:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
-       \[$greenbold\]\h\[$reset\]\[$white\]:
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+      \[$greenbold\]\h\[$reset\]\[$white\]:
+    #+END_SRC
 
-     In the past, I’ve also included the username (~\u~) before the hostname,
-     but except in specific cases (perhaps when logging in as root, which I tend
-     to disable), I don’t really care about seeing it on every prompt.  On the
-     other hand, I often have multiple terminal windows open to multiple
-     different hosts, and I find it easy to get confused, so I always display
-     the hostname.
+    In the past, I’ve also included the username (~\u~) before the hostname, but
+    except in specific cases (perhaps when logging in as root, which I tend to
+    disable), I don’t really care about seeing it on every prompt.  On the other
+    hand, I often have multiple terminal windows open to multiple different
+    hosts, and I find it easy to get confused, so I always display the hostname.
 
-   - The third part of the ~$PS1~ variable prints out the current working
-     directory in a bold, blue color:
+  - The third part of the ~$PS1~ variable prints out the current working
+    directory in a bold, blue color:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
-       \[$reset\]\[$bluebold\]\W
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+      \[$reset\]\[$bluebold\]\W
+    #+END_SRC
 
-     The ~\W~ command here only prints out the name of the working directory,
-     not the full path to it (this can be done using the ~\w~ command).  I want
-     my prompt to be relatively short, so I can fit the command on the same line
-     as the prompt, and when I want to know the full path, I can always use the
-     ~pwd~ command.
+    The ~\W~ command here only prints out the name of the working directory, not
+    the full path to it (this can be done using the ~\w~ command).  I want my
+    prompt to be relatively short, so I can fit the command on the same line as
+    the prompt, and when I want to know the full path, I can always use the
+    ~pwd~ command.
 
-   - Then, we print out the exit code of the last command run in parentheses, in
-     plain white:
+  - Then, we print out the exit code of the last command run in parentheses, in
+    plain white:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
-       \[$reset\]\[$white\](\$?)
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+      \[$reset\]\[$white\](\$?)
+    #+END_SRC
 
-     The exit code of the last command run is contained within the ~$?~
-     variable.  I’ve found this functionality very useful, because I’ve run
-     across tricky commands that don’t print out a useful message to ~stderr~ to
-     indicate that they’ve failed, but just die with some nonzero exit code.
+    The exit code of the last command run is contained within the ~$?~ variable.
+    I’ve found this functionality very useful, because I’ve run across tricky
+    commands that don’t print out a useful message to ~stderr~ to indicate that
+    they’ve failed, but just die with some nonzero exit code.
 
-     Notice that we have to escape the dollar sign of the ~$?~, because
-     otherwise it would be expanded when we set the ~PS1~ variable initially,
-     not expanded each time the shell prompt is printed!
+    Notice that we have to escape the dollar sign of the ~$?~, because otherwise
+    it would be expanded when we set the ~PS1~ variable initially, not expanded
+    each time the shell prompt is printed!
 
-   - The final part of the ~$PS1~ variable prints out the actual prompt, a
-     dollar sign and space, and resets the color state:
+  - The final part of the ~$PS1~ variable prints out the actual prompt, a dollar
+    sign and space, and resets the color state:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
-       \\$ \[$reset\]
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt   :noweb-sep ""
+      \\$ \[$reset\]
+    #+END_SRC
 
-     We need to double escape the dollar sign, because otherwise it would be
-     considered an environment variable expansion when printing the prompt.  We
-     really want a literal dollar sign here.
+    We need to double escape the dollar sign, because otherwise it would be
+    considered an environment variable expansion when printing the prompt.  We
+    really want a literal dollar sign here.
 
-   Concatenating these together will set our prompt as we want it.
+Concatenating these together will set our prompt as we want it.
 
-   After that, we want to make sure that xterms which are hosting our shell
-   session (potentially xterms on a different machine, that are connecting over
-   SSH) have a useful title.  Here, I elect to display the username as well as
-   the hostname and working directory.  Unlike in a shell prompt, changing the
-   title will not take up valuable screen real-estate, so this extra information
-   doesn’t have much cost.  As long as the terminal is an xterm (which we check
-   by pattern matching), we prepend a string to the prompt which is displayed on
-   the title bar, but otherwise not shown.  The string has the following form:
+After that, we want to make sure that xterms which are hosting our shell session
+(potentially xterms on a different machine, that are connecting over SSH) have a
+useful title.  Here, I elect to display the username as well as the hostname and
+working directory.  Unlike in a shell prompt, changing the title will not take
+up valuable screen real-estate, so this extra information doesn’t have much
+cost.  As long as the terminal is an xterm (which we check by pattern matching),
+we prepend a string to the prompt which is displayed on the title bar, but
+otherwise not shown.  The string has the following form:
 
-   #+BEGIN_SRC sh   :noweb yes
-     <<sh-prompt-title>>
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb yes
+  <<sh-prompt-title>>
+#+END_SRC
 
-   Let’s look at how this breaks down:
+Let’s look at how this breaks down:
 
-   - We start with the same ~\[~ that we used earlier on to prevent Bash from
-     considering this text when moving the cursor:
+  - We start with the same ~\[~ that we used earlier on to prevent Bash from
+    considering this text when moving the cursor:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
-       \[
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+      \[
+    #+END_SRC
 
-     We will close this at the end of the title text.
+    We will close this at the end of the title text.
 
-   - Then, we add the special escape sequence that an xterm detects to set the
-     title:
+  - Then, we add the special escape sequence that an xterm detects to set the
+    title:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
-       \e]0;
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+      \e]0;
+    #+END_SRC
 
-   - Then, we set the title using the same escape sequences we used for the
-     prompt above, with the addition of a ~\u~, which expands to the current
-     user:
+  - Then, we set the title using the same escape sequences we used for the
+    prompt above, with the addition of a ~\u~, which expands to the current
+    user:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
-       \u@\h: \W
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+      \u@\h: \W
+    #+END_SRC
 
-   - Finally, we tell the xterm that the title text is done and close the ~\[~
-     we opened earlier:
+  - Finally, we tell the xterm that the title text is done and close the ~\[~ we
+    opened earlier:
 
-     #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
-       \a\]
-     #+END_SRC
+    #+BEGIN_SRC sh   :noweb-ref sh-prompt-title   :noweb-sep ""
+      \a\]
+    #+END_SRC
 
-   Now that we’ve set the prompt and xterm title, let’s make sure to source this
-   configuration from ~.bashrc~:
+Now that we’ve set the prompt and xterm title, let’s make sure to source this
+configuration from ~.bashrc~:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/prompt.sh   ] && . $HOME/.config/sh/prompt.sh
-   #+END_SRC
+  #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+    [ -r $HOME/.config/sh/prompt.sh ] && . $HOME/.config/sh/prompt.sh
+  #+END_SRC
 
 ** Miscellaneous Interactive Shell Customizations
 
-   Finally, we’re left with some interactive shell customizations that don’t fit
-   under any other heading.  These are either set in or conditionally sourced
-   from ~$HOME/.config/sh/interactive.sh~, which is listed below:
+Finally, we’re left with some interactive shell customizations that don’t fit
+under any other heading.  These are either set in or conditionally sourced from
+~$HOME/.config/sh/interactive.sh~, which is listed below:
 
-   #+CAPTION: Source listing for ~.config/sh/interactive.sh~.
-   #+BEGIN_SRC sh   :tangle sh/.config/sh/interactive.sh   :noweb yes   :shebang "#!/bin/bash\n"
-     <<sh-interactive>>
-   #+END_SRC
+#+CAPTION: Source listing for ~.config/sh/interactive.sh~.
+#+BEGIN_SRC sh   :tangle sh/.config/sh/interactive.sh   :noweb yes   :shebang "#!/bin/bash\n"
+  <<sh-interactive>>
+#+END_SRC
 
-   As these are interactive, Bash-specific customizations, we want to source it
-   from our ~.bashrc~ by adding the following line to that file:
+As these are interactive, Bash-specific customizations, we want to source it
+from our ~.bashrc~ by adding the following line to that file:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
-     [ -r $HOME/.config/sh/interactive.sh ] && . $HOME/.config/sh/interactive.sh
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-bashrc   :noweb-sep "\n"
+  [ -r $HOME/.config/sh/interactive.sh ] && . $HOME/.config/sh/interactive.sh
+#+END_SRC
 
 *** Bash Completion
 
-    To enable completion in Bash, we source one of two files:
+To enable completion in Bash, we source one of two files:
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
-      # Enable interactive Bash completion
-    #+END_SRC
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
-      if [ -r /usr/share/bash-completion/bash_completion ]; then
-          . /usr/share/bash-completion/bash_completion
-      elif [ -r /etc/bash_completion ]; then
-          . /etc/bash_completion
-      fi
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+  # Enable interactive Bash completion
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+  if [ -r /usr/share/bash-completion/bash_completion ]; then
+      . /usr/share/bash-completion/bash_completion
+  elif [ -r /etc/bash_completion ]; then
+      . /etc/bash_completion
+  fi
+#+END_SRC
 
-    This configuration is taken from the default ~.bashrc~ shipped with Debian;
-    the former path is the path that the ~bash-completion~ package installs to.
-    This can actually be modified [[https://www.gnu.org/software/bash/manual/html_node/Programmable-Completion.html][programmatically]] by packages.
+This configuration is taken from the default ~.bashrc~ shipped with Debian; the
+former path is the path that the ~bash-completion~ package installs to.  This
+can actually be modified [[https://www.gnu.org/software/bash/manual/html_node/Programmable-Completion.html][programmatically]] by packages.
 
 *** Bash History
 
-    Bash has command history support that allows you to recall previously run
-    commands and run them again at a later session.  Command history is stored
-    both in memory and in a special file written to disk, ~$HOME/.bash_history~.
+Bash has command history support that allows you to recall previously run
+commands and run them again at a later session.  Command history is stored both
+in memory and in a special file written to disk, ~$HOME/.bash_history~.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
-      # History configuration
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+  # History configuration
+#+END_SRC
 
-    I don’t care so much about my command history being written to disk, because
-    my primary use case is to save on typing during an interactive session.
-    Because of this, we want to unset the ~$HISTFILE~ variable.  This will
-    prevent the command history from being written to disk when the shell is
-    exited.
+I don’t care so much about my command history being written to disk, because my
+primary use case is to save on typing during an interactive session.  Because of
+this, we want to unset the ~$HISTFILE~ variable.  This will prevent the command
+history from being written to disk when the shell is exited.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
-      unset HISTFILE
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
+  unset HISTFILE
+#+END_SRC
 
-    When saving command history in memory, I want to prevent two things from
-    being added: lines beginning with whitespace (in case we have a reason to
-    run a command and not remember it) and duplicate lines (which are just a
-    nuisance to scroll through).  This can be done by setting the ~$HISTCONTROL~
-    environment variable to ~ignoreboth~.  We don’t want this environment
-    variable to leak into subshells (especially noninteractive subshells), so we
-    don’t ~export~ it.
+When saving command history in memory, I want to prevent two things from being
+added: lines beginning with whitespace (in case we have a reason to run a
+command and not remember it) and duplicate lines (which are just a nuisance to
+scroll through).  This can be done by setting the ~$HISTCONTROL~ environment
+variable to ~ignoreboth~.  We don’t want this environment variable to leak into
+subshells (especially noninteractive subshells), so we don’t ~export~ it.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
-      HISTCONTROL=ignoreboth
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"
+  HISTCONTROL=ignoreboth
+#+END_SRC
 
-    We also want to set a few shell options to control how history is stored as
-    well:
+We also want to set a few shell options to control how history is stored as
+well:
 
-    - ~cmdhist~ saves all lines in a multi-line command in the history file,
-      which makes it easy to modify multi-line commands that we’ve run.
+  - ~cmdhist~ saves all lines in a multi-line command in the history file, which
+    makes it easy to modify multi-line commands that we’ve run.
 
-    - ~histreedit~ allows a user to re-edit a failed history substitution
-      instead of clearing the prompt.
+  - ~histreedit~ allows a user to re-edit a failed history substitution instead
+    of clearing the prompt.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
-      shopt -s cmdhist
-      shopt -s histreedit
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+  shopt -s cmdhist
+  shopt -s histreedit
+#+END_SRC
 
 *** Miscellaneous Configuration
 
-    Finally, we have the following configuration options that don’t fit anywhere
-    else.
+Finally, we have the following configuration options that don’t fit anywhere
+else.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
-      # Miscellaneous configuration items
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n"   :exports none
+  # Miscellaneous configuration items
+#+END_SRC
 
-    We want to check the size of the terminal window after each command and, if
-    necessary, update the values of ~$LINES~ and ~$COLUMNS~.  If any command
-    uses the size of the terminal window to intelligently format output (think
-    ~ls~ selecting the number of columns to output filenames in), this will give
-    it up-to-date information on the terminal size.  The shell option
-    ~checkwinsize~ does this for us.
+We want to check the size of the terminal window after each command and, if
+necessary, update the values of ~$LINES~ and ~$COLUMNS~.  If any command uses
+the size of the terminal window to intelligently format output (think ~ls~
+selecting the number of columns to output filenames in), this will give it
+up-to-date information on the terminal size.  The shell option ~checkwinsize~
+does this for us.
 
-    #+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
-      shopt -s checkwinsize
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-interactive   :noweb-sep "\n\n"
+  shopt -s checkwinsize
+#+END_SRC
 
-    #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
-     export MOZ_ENABLE_WAYLAND=1
-    #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+ export MOZ_ENABLE_WAYLAND=1
+#+END_SRC
 
 * Readline
 
-  [[https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html][GNU Readline]] is a library used by many programs for interactive command
-  editing and recall.  Most importantly for my purposes, it is used by Bash, so
-  this could be considered as an extension of our [[*Shell][shell configuration]].
+[[https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html][GNU Readline]] is a library used by many programs for interactive command editing
+and recall.  Most importantly for my purposes, it is used by Bash, so this could
+be considered as an extension of our [[*Shell][shell configuration]].
 
-  Let’s start off by moving the configuration to the correct XDG Basedir by
-  adding this to the ~xdg.sh~ script we detail in the [[*XDG Base Directories][XDG Basedirs section]].
+Let’s start off by moving the configuration to the correct XDG Basedir by adding
+this to the ~xdg.sh~ script we detail in the [[*XDG Base Directories][XDG Basedirs section]].
 
-  #+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
-    export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
-  #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-xdg   :noweb-sep "\n"
+  export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
+#+END_SRC
 
-  The actual ~$XDG_CONFIG_HOME/readline/inputrc~ file is shown and described
-  below:
+The actual ~$XDG_CONFIG_HOME/readline/inputrc~ file is shown and described
+below:
 
-  #+CAPTION: Source listing for ~.config/readline/inputrc~.
-  #+BEGIN_SRC conf   :tangle readline/.config/readline/inputrc   :noweb yes
-    <<inputrc>>
-  #+END_SRC
+#+CAPTION: Source listing for ~.config/readline/inputrc~.
+#+BEGIN_SRC conf   :tangle readline/.config/readline/inputrc   :noweb yes
+  <<inputrc>>
+#+END_SRC
 
-  Our first configuration is to make ~TAB~ autocomplete regardless of the case
-  of the input.  This is somewhat of a trade-off, because it gives worse
-  completion when the case of a prefix really does disambiguate.  I find, in
-  practice, this is rather rare, and even rarer in my primary Readline
-  application, Bash.
+Our first configuration is to make ~TAB~ autocomplete regardless of the case of
+the input.  This is somewhat of a trade-off, because it gives worse completion
+when the case of a prefix really does disambiguate.  I find, in practice, this
+is rather rare, and even rarer in my primary Readline application, Bash.
 
-  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
-    set completion-ignore-case on
-  #+END_SRC
+#+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+  set completion-ignore-case on
+#+END_SRC
 
-  I find the default behavior of Readline with regard to ambiguous completion to
-  be very annoying.  By default, Readline will beep at you when you attempt to
-  complete an ambiguous prefix and wait for you to press ~TAB~ again to see the
-  alternatives; if the completion is ambiguous, I want to be told of the
-  possible alternatives immediately.  Enabling the ~show-all-if-ambiguous~
-  setting accomplishes this.
+I find the default behavior of Readline with regard to ambiguous completion to
+be very annoying.  By default, Readline will beep at you when you attempt to
+complete an ambiguous prefix and wait for you to press ~TAB~ again to see the
+alternatives; if the completion is ambiguous, I want to be told of the possible
+alternatives immediately.  Enabling the ~show-all-if-ambiguous~ setting
+accomplishes this.
 
-  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
-    set show-all-if-ambiguous on
-  #+END_SRC
+#+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+  set show-all-if-ambiguous on
+#+END_SRC
 
-  Another setting we want to make sure is set is to not autocomplete hidden
-  files unless the pattern explicitly begins with a dot.  Usually I don’t want
-  to deal with hidden files, so this is a good trade-off.
+Another setting we want to make sure is set is to not autocomplete hidden files
+unless the pattern explicitly begins with a dot.  Usually I don’t want to deal
+with hidden files, so this is a good trade-off.
 
-  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
-    set match-hidden-files off
-  #+END_SRC
+#+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+  set match-hidden-files off
+#+END_SRC
 
-  Also, we want to normalize the handling of directories and symlinks to
-  directories, so there appears to be no difference.  The following setting
-  immediately adds a trailing slash when autocompleting symlinks to
-  directories.
+Also, we want to normalize the handling of directories and symlinks to
+directories, so there appears to be no difference.  The following setting
+immediately adds a trailing slash when autocompleting symlinks to directories.
 
-  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
-    set mark-symlinked-directories on
-  #+END_SRC
+#+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+  set mark-symlinked-directories on
+#+END_SRC
 
-  Finally, we add more intelligent ~UP~/~DOWN~ behavior, using the text that has
-  already been typed as the prefix for searching through command history.
+Finally, we add more intelligent ~UP~/~DOWN~ behavior, using the text that has
+already been typed as the prefix for searching through command history.
 
-  #+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
-    "\e[B": history-search-forward
-    "\e[A": history-search-backward
-  #+END_SRC
+#+BEGIN_SRC conf   :noweb-ref inputrc   :noweb-sep "\n"
+  "\e[B": history-search-forward
+  "\e[A": history-search-backward
+#+END_SRC
 
 * GnuPG
-  #+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
-     export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
-  #+end_src
+#+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
+   export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+#+end_src
 
 * SSH
-  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
-    export SSH_AGENT_PID=
-    export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
-  #+END_SRC
-* Mail
-  My current email setup is probably the biggest improvement I have ever made
-  for my productivity.  I have, in the past, used [[https://wiki.gnome.org/Apps/Evolution][GNOME Evolution]] for email,
-  which I find to be a really nice program.  However, it started to balk at the
-  number of emails I had.  Sometimes, its database would become corrupted, and I
-  would have to download all my mails again.  Furthermore, as I started using
-  Emacs [[http://orgmode.org/][Org Mode]] to manage my schedule and notes, I was finding I was only using
-  Evolution for mail.  Naturally, I started looking for a more stable and
-  Emacs-compatible solution.
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+  export SSH_AGENT_PID=
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+#+END_SRC
 
-  There were some important considerations I had when researching a mail setup:
+* Mail
+My current email setup is probably the biggest improvement I have ever made for
+my productivity.  I have, in the past, used [[https://wiki.gnome.org/Apps/Evolution][GNOME Evolution]] for email, which I
+find to be a really nice program.  However, it started to balk at the number of
+emails I had.  Sometimes, its database would become corrupted, and I would have
+to download all my mails again.  Furthermore, as I started using Emacs [[http://orgmode.org/][Org Mode]]
+to manage my schedule and notes, I was finding I was only using Evolution for
+mail.  Naturally, I started looking for a more stable and Emacs-compatible
+solution.
+
+There were some important considerations I had when researching a mail setup:
 
   1. I want to be able to work offline, and that includes reading (and even
      sending) mail!  Sometimes this is born of necessity, such as when I'm on a
@@ -949,699 +936,691 @@
      In the future, I may look at [[http://imapfw.offlineimap.org/][imapfw]], which is by the same author as
      OfflineIMAP—it just doesn’t look stable enough at the moment.
 
-  I switched through some setups, eventually settling on my current setup, which
-  centers around the following loosely-coupled tools:
+I switched through some setups, eventually settling on my current setup, which
+centers around the following loosely-coupled tools:
 
   - [[http://isync.sourceforge.net/][isync]] :: a tool for synchronizing a local Maildir with an IMAP server.
-       Because isync only connects to the server intermittently to sync a local
-       copy with a remote copy, it means I don’t have to have an internet
-       connection at all times to read my mail, satisfying consideration 1
-       above.  Compared to the alternative in the same space, [[http://www.offlineimap.org/][OfflineIMAP]], I’ve
-       found isync very fast, even with all the mail I have; this satisfies
-       condition 2.  Finally, isync only uses the IMAP4 protocol and the
-       widely-used Maildir format, meaning I’m not locked into it if I want to
-       switch or do something novel with my email, satisfying condition 3.
+    Because isync only connects to the server intermittently to sync a local
+    copy with a remote copy, it means I don’t have to have an internet
+    connection at all times to read my mail, satisfying consideration 1 above.
+    Compared to the alternative in the same space, [[http://www.offlineimap.org/][OfflineIMAP]], I’ve found isync
+    very fast, even with all the mail I have; this satisfies condition 2.
+    Finally, isync only uses the IMAP4 protocol and the widely-used Maildir
+    format, meaning I’m not locked into it if I want to switch or do something
+    novel with my email, satisfying condition 3.
 
   - [[https://github.com/gauteh/lieer][lieer]] :: a tool for synchronizing a local notmuch Maildir with Gmail tags.
 
   - [[http://msmtp.sourceforge.net/][msmtp]] :: a sendmail-compatible tool for sending emails through a remote SMTP
-       server.  Packaged with it in the Debian archive is a nice script called
-       =msmtpq=, which, if we can’t send mail to the remote server (if, for
-       instance, we’re not connected to the network), queues the mail locally to
-       be sent later.  In doing so, it satisfies my first criterion above, and
-       since it’s an SMTP tool, it satisfies criterion 3 as well.  Fortunately,
-       I don’t send all that much mail, so it’s not important for this to scale
-       to a large number of messages—although, it might.
+    server.  Packaged with it in the Debian archive is a nice script called
+    =msmtpq=, which, if we can’t send mail to the remote server (if, for
+    instance, we’re not connected to the network), queues the mail locally to be
+    sent later.  In doing so, it satisfies my first criterion above, and since
+    it’s an SMTP tool, it satisfies criterion 3 as well.  Fortunately, I don’t
+    send all that much mail, so it’s not important for this to scale to a large
+    number of messages—although, it might.
 
   - [[https://notmuchmail.org/][notmuch]] :: a Maildir indexer, which provides lightning fast tagging and
-       searching for email messages.  The search-based paradigm for email is how
-       email /should/ be, as it takes so little maintenance.  notmuch only needs
-       a local copy of your email (condition 1), uses a Xapian database and puts
-       it in your Maildir (condition 3), and is incredibly fast (even faster
-       than its competitor, [[http://www.djcbsoftware.nl/code/mu/][mu]], which I used for some time), and able to cope
-       with very, very large amounts of email (condition 2).
+    searching for email messages.  The search-based paradigm for email is how
+    email /should/ be, as it takes so little maintenance.  notmuch only needs a
+    local copy of your email (condition 1), uses a Xapian database and puts it
+    in your Maildir (condition 3), and is incredibly fast (even faster than its
+    competitor, [[http://www.djcbsoftware.nl/code/mu/][mu]], which I used for some time), and able to cope with very,
+    very large amounts of email (condition 2).
 
-  All of these tools combine together to make an incredibly efficient email
-  workflow.  To set each of these tools up, though, we need to do some
-  preliminary work.
+All of these tools combine together to make an incredibly efficient email
+workflow.  To set each of these tools up, though, we need to do some preliminary
+work.
 
-  Let’s create a directory to store our emails first:
+Let’s create a directory to store our emails first:
 
-  #+begin_src sh
-    mkdir -p ~/Retpoŝtoj
-  #+end_src
+#+begin_src sh
+  mkdir -p ~/Retpoŝtoj
+#+end_src
 
 ** General Configuration
-   This section describes general configuration of each of the components of the
-   setup.  The next section gives the configuration for each account I use.
+This section describes general configuration of each of the components of the
+setup.  The next section gives the configuration for each account I use.
 
 *** Retrieving Mail with isync
-    As described above, the tool we will use to sync mail to and from our IMAP
-    servers is [[http://isync.sourceforge.net/][isync]], a fast IMAP and Maildir synchronization program written in
-    C.  To get started, we need to make sure we have the =isync= package
-    installed.  Let's install it:
+As described above, the tool we will use to sync mail to and from our IMAP
+servers is [[http://isync.sourceforge.net/][isync]], a fast IMAP and Maildir synchronization program written in C.
+To get started, we need to make sure we have the =isync= package installed.
+Let's install it:
 
-    #+begin_src sh   :dir /sudo::   :results outputs verbatim
-      DEBIAN_FRONTEND=noninteractive apt-get -y install isync
-    #+end_src
+#+begin_src sh   :dir /sudo::   :results outputs verbatim
+  DEBIAN_FRONTEND=noninteractive apt-get -y install isync
+#+end_src
 
-    Configuration of isync is not too hard, but there are some caveats.  As we
-    discussed in the [[*XDG Base Directories][XDG Basedirs section]], our ideal is to move all
-    configuration files out of our home directory.  Our usual tool for doing
-    this is by setting an environment variable.  isync does not support an
-    environment variable like this, though.  Fortunately, its =mbsync=
-    executable does support a command line flag telling it where to look for its
-    configuration file.  As long as we only use isync with this flag, we'll be
-    fine (and we'll make sure of this later).  However, this means we can place
-    our configuration in a ~$XDG_CONFIG_HOME/isync/config~ file, shown below:
+Configuration of isync is not too hard, but there are some caveats.  As we
+discussed in the [[*XDG Base Directories][XDG Basedirs section]], our ideal is to move all configuration
+files out of our home directory.  Our usual tool for doing this is by setting an
+environment variable.  isync does not support an environment variable like this,
+though.  Fortunately, its =mbsync= executable does support a command line flag
+telling it where to look for its configuration file.  As long as we only use
+isync with this flag, we'll be fine (and we'll make sure of this later).
+However, this means we can place our configuration in a
+~$XDG_CONFIG_HOME/isync/config~ file, shown below:
 
-    #+caption: Source listing for ~.config/isync/config~.
-    #+begin_src conf   :tangle mail/.config/isync/config   :noweb yes
-      # -*- conf -*-
+#+caption: Source listing for ~.config/isync/config~.
+#+begin_src conf   :tangle mail/.config/isync/config   :noweb yes
+  # -*- conf -*-
 
-      <<mail-isync>>
-    #+end_src
+  <<mail-isync>>
+#+end_src
 
-    Before diving into this file, let’s take some time to understand the basic
-    concepts of isync.  Isync essentially deals with mappings between two
-    backing stores of email; these mappings are called /channels/.  A channel
-    has a /master/ store (usually the authoritative copy) and a /slave/ store
-    (usually a replica).  Each of these stores can either be a mailbox stored in
-    a local Maildir or a mailbox stored in a remote server, accessible over
-    IMAP.  Finally, for IMAP stores, we need to also set up information about
-    the IMAP connection, called an /IMAP account/.
+Before diving into this file, let’s take some time to understand the basic
+concepts of isync.  Isync essentially deals with mappings between two backing
+stores of email; these mappings are called /channels/.  A channel has a /master/
+store (usually the authoritative copy) and a /slave/ store (usually a replica).
+Each of these stores can either be a mailbox stored in a local Maildir or a
+mailbox stored in a remote server, accessible over IMAP.  Finally, for IMAP
+stores, we need to also set up information about the IMAP connection, called an
+/IMAP account/.
 
 *** Sending Mail with msmtp
-    We don’t just want to receive mail locally, though; we also want to send it.
-    To do this, we will use [[https://marlam.de/msmtp/][msmtp]], a sendmail-like process that communicates
-    with external SMTP servers.  The msmtp package also contains an
-    implementation of a local mail queue, which I need for sending mail when
-    offline.  So, first let’s install the =msmtp= package from Debian.
+We don’t just want to receive mail locally, though; we also want to send it.  To
+do this, we will use [[https://marlam.de/msmtp/][msmtp]], a sendmail-like process that communicates with
+external SMTP servers.  The msmtp package also contains an implementation of a
+local mail queue, which I need for sending mail when offline.  So, first let’s
+install the =msmtp= package from Debian.
 
-    #+begin_src sh   :dir /sudo::   :results outputs verbatim
-      DEBIAN_FRONTEND=noninteractive apt-get -y install msmtp
-    #+end_src
+#+begin_src sh   :dir /sudo::   :results outputs verbatim
+  DEBIAN_FRONTEND=noninteractive apt-get -y install msmtp
+#+end_src
 
-    The mail queue scripts are installed along with documentation, along with a
-    very useful [[file:/usr/share/doc/msmtp/examples/msmtpq/README.msmtpq][README file]].  As described there, the queue scripts are a
-    wrapper for msmtp itself, and so these scripts are what we will be using for
-    our MTA.  We need to copy them to our =PATH= and make sure they are
-    executable.
+The mail queue scripts are installed along with documentation, along with a very
+useful [[file:/usr/share/doc/msmtp/examples/msmtpq/README.msmtpq][README file]].  As described there, the queue scripts are a wrapper for
+msmtp itself, and so these scripts are what we will be using for our MTA.  We
+need to copy them to our =PATH= and make sure they are executable.
 
-    #+begin_src sh
-      mkdir -p ~/.local/bin
-      cp /usr/share/doc/msmtp/examples/msmtpq/msmtp-queue ~/.local/bin/
-      cp /usr/share/doc/msmtp/examples/msmtpq/msmtpq      ~/.local/bin/
-      chmod +x ~/.local/bin/msmtp-queue ~/.local/bin/msmtpq
-    #+end_src
+#+begin_src sh
+  mkdir -p ~/.local/bin
+  cp /usr/share/doc/msmtp/examples/msmtpq/msmtp-queue ~/.local/bin/
+  cp /usr/share/doc/msmtp/examples/msmtpq/msmtpq      ~/.local/bin/
+  chmod +x ~/.local/bin/msmtp-queue ~/.local/bin/msmtpq
+#+end_src
 
-    Next, we need to tell these scripts where to place the queue.  I think the
-    proper place for this is is in a subdirectory of =$XDG_DATA_HOME=, so the
-    queue is persistent between boots (just in case!).  Let’s create that
-    directory.
+Next, we need to tell these scripts where to place the queue.  I think the
+proper place for this is is in a subdirectory of =$XDG_DATA_HOME=, so the queue
+is persistent between boots (just in case!).  Let’s create that directory.
 
-    #+begin_src sh
-      mkdir -p   $XDG_DATA_HOME/msmtp/queue
-      chmod 0700 $XDG_DATA_HOME/msmtp/queue
-    #+end_src
+#+begin_src sh
+  mkdir -p   $XDG_DATA_HOME/msmtp/queue
+  chmod 0700 $XDG_DATA_HOME/msmtp/queue
+#+end_src
 
-    Next, we need to modify the =msmtpq= script to use this directory.  We do
-    this by rewriting two configuration lines near the top of the script:
+Next, we need to modify the =msmtpq= script to use this directory.  We do this
+by rewriting two configuration lines near the top of the script:
 
-    #+begin_src sed   :cmd-line -i   :in-file ~/.local/bin/msmtpq
-      s|Q=~/.msmtp.queue|Q=\$XDG_DATA_HOME/msmtp/queue|;
-      s|LOG=~/log/msmtp.queue.log|LOG=\$XDG_DATA_HOME/msmtp/queue.log|;
-    #+end_src
+#+begin_src sed   :cmd-line -i   :in-file ~/.local/bin/msmtpq
+  s|Q=~/.msmtp.queue|Q=\$XDG_DATA_HOME/msmtp/queue|;
+  s|LOG=~/log/msmtp.queue.log|LOG=\$XDG_DATA_HOME/msmtp/queue.log|;
+#+end_src
 
-    We are almost ready to just use the local =msmtpq= program as our MTA!
-    However, if we are running apparmor on our system, we won’t be able to read
-    the local configuration file using the default profile.  We will add to the
-    whitelist the ability to read any path in the home directory that ends in
-    ~msmtp/config~.
+We are almost ready to just use the local =msmtpq= program as our MTA!  However,
+if we are running apparmor on our system, we won’t be able to read the local
+configuration file using the default profile.  We will add to the whitelist the
+ability to read any path in the home directory that ends in ~msmtp/config~.
 
-    #+begin_src sh   :dir /sudo::
-      echo 'owner @{HOME}/**/msmtp/config r,' >> /etc/apparmor.d/local/usr.bin.msmtp
-    #+end_src
+#+begin_src sh   :dir /sudo::
+  echo 'owner @{HOME}/**/msmtp/config r,' >> /etc/apparmor.d/local/usr.bin.msmtp
+#+end_src
 
-    Configuring =msmtp=, like =isync= is fairly simple.
+Configuring =msmtp=, like =isync= is fairly simple.
 
-    #+caption: Source listing for ~$XDG_CONFIG_HOME/msmtp/config~.
-    #+begin_src conf   :tangle mail/.config/msmtp/config   :noweb yes
-      # -*- conf -*-
-      # Set default values for all following accounts.
-      defaults
-      auth   on
-      tls    on
-      syslog on
+#+caption: Source listing for ~$XDG_CONFIG_HOME/msmtp/config~.
+#+begin_src conf   :tangle mail/.config/msmtp/config   :noweb yes
+  # -*- conf -*-
+  # Set default values for all following accounts.
+  defaults
+  auth   on
+  tls    on
+  syslog on
 
-      <<mail-msmtp>>
+  <<mail-msmtp>>
 
 
-      # Set a default account
-      account default : personal
-    #+end_src
+  # Set a default account
+  account default : personal
+#+end_src
 
 *** Searching Mail
-    In order to index and search our mail, we use [[https://notmuchmail.org/][notmuch]].  Let’s first install
-    this from the Debian archive:
+In order to index and search our mail, we use [[https://notmuchmail.org/][notmuch]].  Let’s first install this
+from the Debian archive:
 
-    #+begin_src sh   :dir /sudo::   :results outputs verbatim
-      DEBIAN_FRONTEND=noninteractive apt-get -y install notmuch
-    #+end_src
+#+begin_src sh   :dir /sudo::   :results outputs verbatim
+  DEBIAN_FRONTEND=noninteractive apt-get -y install notmuch
+#+end_src
 
-    Note that we don’t want to install notmuch-emacs, because it pulls in
-    emacs24.  We use 25, so instead we will pull from MELPA.
+Note that we don’t want to install notmuch-emacs, because it pulls in emacs24.
+We use 25, so instead we will pull from MELPA.
 
-    By default, notmuch looks for a configuration file directly under the user’s
-    home.  We can configure this using an environment variable, though, so we
-    can hide this away within the XDG configuration directory.
+By default, notmuch looks for a configuration file directly under the user’s
+home.  We can configure this using an environment variable, though, so we can
+hide this away within the XDG configuration directory.
 
-    #+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
-      export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/config"
-    #+end_src
+#+begin_src sh   :noweb-ref sh-xdg   :noweb-sep "\n"
+  export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/config"
+#+end_src
 
-    Speaking of the configuration file, let’s take a look at it:
+Speaking of the configuration file, let’s take a look at it:
 
-    #+begin_src conf   :tangle mail/.config/notmuch/config   :noweb yes
-      [database]
-      path=/home/pniedzielski/Retpoŝtoj
+#+begin_src conf   :tangle mail/.config/notmuch/config   :noweb yes
+  [database]
+  path=/home/pniedzielski/Retpoŝtoj
 
-      [user]
-      name=Patrick M. Niedzielski
-      primary_email=patrick@pniedzielski.net
-      other_email=pnski@mit.edu;PatrickNiedzielski@gmail.com;pmn25@cornell.edu;pniedzielski@andover.edu;
+  [user]
+  name=Patrick M. Niedzielski
+  primary_email=patrick@pniedzielski.net
+  other_email=pnski@mit.edu;PatrickNiedzielski@gmail.com;pmn25@cornell.edu;pniedzielski@andover.edu;
 
-      [new]
-      tags=new
-      ignore=.credentials.gmailieer.json;.gmailieer.json;.state.gmailieer.json;.state.gmailieer.json.bak;.gmailieer.json.bak;.lock;.mbsyncstate;.uidvalidity;.msyncstate.journal;.mbsyncstate.new
+  [new]
+  tags=new
+  ignore=.credentials.gmailieer.json;.gmailieer.json;.state.gmailieer.json;.state.gmailieer.json.bak;.gmailieer.json.bak;.lock;.mbsyncstate;.uidvalidity;.msyncstate.journal;.mbsyncstate.new
 
-      [search]
-      exclude_tags=deleted;spam
+  [search]
+  exclude_tags=deleted;spam
 
-      [maildir]
-      synchronize_flags=true
+  [maildir]
+  synchronize_flags=true
 
-      [crypto]
-      gpg_path=gpg
-    #+end_src
+  [crypto]
+  gpg_path=gpg
+#+end_src
 
 *** Automating
-    We can automate the synchronizing of mail and tagging using [[man:notmuch-hooks][Notmuch’s hooks]].
-    There are two hooks that we need to consider:
+We can automate the synchronizing of mail and tagging using [[man:notmuch-hooks][Notmuch’s hooks]].
+There are two hooks that we need to consider:
 
-      - ~pre-new~ :: This hook runs when ~notmuch new~ is called, but before the
-        database is updated.  This is a good place to synchronize our mail with
-        the network.  It is important that we should always succeed in this
-        hook, even if the network is down.
+  - ~pre-new~ :: This hook runs when ~notmuch new~ is called, but before the
+    database is updated.  This is a good place to synchronize our mail with the
+    network.  It is important that we should always succeed in this hook, even
+    if the network is down.
 
-      - ~post-new~ :: This hook runs after ~notmuch new~ is called, and after
-        the database is updated.  At this point, any new messages should be
-        tagged with ~new~.  This is where we want to do initial tagging.
+  - ~post-new~ :: This hook runs after ~notmuch new~ is called, and after the
+    database is updated.  At this point, any new messages should be tagged with
+    ~new~.  This is where we want to do initial tagging.
 
-    Let’s take a look at the ~pre-new~ hook:
+Let’s take a look at the ~pre-new~ hook:
 
-    #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/pre-new~.
-    #+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/pre-new   :noweb yes   :shebang "#!/bin/sh"
-      # -*- sh -*-
+#+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/pre-new~.
+#+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/pre-new   :noweb yes   :shebang "#!/bin/sh"
+  # -*- sh -*-
 
-      # Flush out the outbox.
-      msmtp-queue -r
+  # Flush out the outbox.
+  msmtp-queue -r
 
-      # Pull new mail from our accounts.
-      (echo -n "Sync Personal…" && mbsync -c ~/.config/isync/config personal     && echo "Done!") || echo "Error!" &
-      (echo -n "Sync MIT…"      && mbsync -c ~/.config/isync/config mit          && echo "Done!") || echo "Error!" &
-      (echo -n "Sync Gmail…"    && cd ~/Retpoŝtoj/gmail   && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
-      (echo -n "Sync Cornell…"  && cd ~/Retpoŝtoj/cornell && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
+  # Pull new mail from our accounts.
+  (echo -n "Sync Personal…" && mbsync -c ~/.config/isync/config personal     && echo "Done!") || echo "Error!" &
+  (echo -n "Sync MIT…"      && mbsync -c ~/.config/isync/config mit          && echo "Done!") || echo "Error!" &
+  (echo -n "Sync Gmail…"    && cd ~/Retpoŝtoj/gmail   && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
+  (echo -n "Sync Cornell…"  && cd ~/Retpoŝtoj/cornell && gmi sync >/dev/null && echo "Done!") || echo "Error!" &
 
-      wait
-    #+end_src
+  wait
+#+end_src
 
-    Syncing my mail used to take quite a long time, because I pulled mail from
-    each account sequentially.  The above hook pulls each account in parallel,
-    and then waits for them all to complete before moving on.
+Syncing my mail used to take quite a long time, because I pulled mail from each
+account sequentially.  The above hook pulls each account in parallel, and then
+waits for them all to complete before moving on.
 
-    Now, let’s take a look at the tagging in the ~post-new~ hook:
+Now, let’s take a look at the tagging in the ~post-new~ hook:
 
-    #+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/post-new~.
-    #+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/post-new   :noweb yes   :shebang "#!/bin/sh"
-      # -*- sh -*-
+#+caption: Source listing for ~Retpoŝtoj/.notmuch/hooks/post-new~.
+#+begin_src sh   :tangle mail/Retpoŝtoj/.notmuch/hooks/post-new   :noweb yes   :shebang "#!/bin/sh"
+  # -*- sh -*-
 
-      notmuch tag +account/personal -- is:new and path:personal/**
-      notmuch tag +account/mit      -- is:new and path:mit/**
-      notmuch tag +account/gmail    -- is:new and path:gmail/**
-      notmuch tag +account/cornell  -- is:new and path:cornell/**
+  notmuch tag +account/personal -- is:new and path:personal/**
+  notmuch tag +account/mit      -- is:new and path:mit/**
+  notmuch tag +account/gmail    -- is:new and path:gmail/**
+  notmuch tag +account/cornell  -- is:new and path:cornell/**
 
-      notmuch tag +to-me -- is:new and to:patrick@pniedzielski.net
-      notmuch tag +to-me -- is:new and to:pnski@mit.edu
-      notmuch tag +to-me -- is:new and to:PatrickNiedzielski@gmail.com
-      notmuch tag +to-me -- is:new and to:pmn25@cornell.edu
+  notmuch tag +to-me -- is:new and to:patrick@pniedzielski.net
+  notmuch tag +to-me -- is:new and to:pnski@mit.edu
+  notmuch tag +to-me -- is:new and to:PatrickNiedzielski@gmail.com
+  notmuch tag +to-me -- is:new and to:pmn25@cornell.edu
 
-      notmuch tag +sent -- is:new and from:patrick@pniedzielski.net
-      notmuch tag +sent -- is:new and from:pnski@mit.edu
-      notmuch tag +sent -- is:new and from:PatrickNiedzielski@gmail.com
-      notmuch tag +sent -- is:new and from:pmn25@cornell.edu
+  notmuch tag +sent -- is:new and from:patrick@pniedzielski.net
+  notmuch tag +sent -- is:new and from:pnski@mit.edu
+  notmuch tag +sent -- is:new and from:PatrickNiedzielski@gmail.com
+  notmuch tag +sent -- is:new and from:pmn25@cornell.edu
 
-      notmuch tag +feeds -- is:new and to:feed2imap@pniedzielski.net
+  notmuch tag +feeds -- is:new and to:feed2imap@pniedzielski.net
 
-      notmuch tag +lists +lists/boston-pm                -- is:new and to:Boston-pm@mail.pm.org
-      notmuch tag +lists +lists/LINGUIST-L               -- is:new and list:linguist.listserv.linguistlist.org
-      notmuch tag +lists +lists/CONLANG-L                -- is:new and to:CONLANG@listserv.brown.edu
-      notmuch tag +lists +lists/LCS-members              -- is:new and to:members@lists.conlang.org
-      notmuch tag +lists +lists/EFFector        -to-me   -- is:new and from:editor@eff.org
-      notmuch tag +lists +lists/SIL-font-news            -- is:new and to:sil-font-news@groups.sil.org
-      notmuch tag +lists +lists/bulletproof-tls -to-me   -- is:new and from:newsletter@feistyduck.com
-      notmuch tag +lists +lists/xrds-acm                 -- is:new and to:XRDS-NEWSLETTER@listserv.acm.org
-      notmuch tag +lists +lists/technews-acm    -to-me   -- is:new and from:technews@hq.acm.organization
-      notmuch tag +lists +lists/debian-security-announce -- is:new and to:debian-security-announce@lists.debian.org
-      notmuch tag +lists +lists/info-fsf        -to-me   -- is:new and from:info@fsf.org
-      notmuch tag +lists +lists/info-gnu                 -- is:new and from:info-gnu-request@gnu.org
-      notmuch tag +lists +lists/perl-qa                  -- is:new and to:perl-qa@perl.org
-      notmuch tag +lists +lists/c++embedded    +c++      -- is:new and to:embedded@open-std.org
-      notmuch tag +lists +lists/cxx-abi-dev    +c++      -- is:new and to:cxx-abi-dev@codesourcery.com
-      notmuch tag +lists +lists/std-discussion +c++      -- is:new and to:std-discussion@isocpp.org
-      notmuch tag +lists +lists/std-proposals  +c++      -- is:new and to:std-proposals@isocpp.org
-      notmuch tag +lists +lists/sg2-modules    +c++      -- is:new and to:modules@isocpp.org
-      notmuch tag +lists +lists/sg5-tm         +c++      -- is:new and to:tm@isocpp.org
-      notmuch tag +lists +lists/sg7-reflection +c++      -- is:new and to:reflection@isocpp.org
-      notmuch tag +lists +lists/sg8-concepts   +c++      -- is:new and to:concepts@isocpp.org
-      notmuch tag +lists +lists/sg9-ranges     +c++      -- is:new and to:ranges@open-std.org
-      notmuch tag +lists +lists/sg10-features  +c++      -- is:new and to:features@open-std.org
-      notmuch tag +lists +lists/sg12-ub        +c++      -- is:new and to:ub@open-std.org
-      notmuch tag +lists +lists/sg13-hmi       +c++      -- is:new and to:sg13@isocpp.org
-      notmuch tag +lists +lists/MIT-daily      -to-me    -- is:new and list:80f62adc67c5889c8cf03eb72.174773.list-id.mcsv.net
-      notmuch tag +lists +lists/MITAC          -to-me    -- is:new and list:7dfb17e8237543c1b898119e1.250537.list-id.mcsv.net
-      notmuch tag +lists +lists/GSC-anno       -to-me    -- is:new and list:cdee009ad27356d631e8ca5b8.380005.list-id.mcsv.net
-      notmuch tag +lists +lists/LSA            -to-me    -- is:new and list:001f7eb7302f6add98bff7e46.216539.list-id.mcsv.net
-      notmuch tag +lists +lists/emacs-humanities -to-me  -- is:new and to:emacs-humanities@gnu.org
+  notmuch tag +lists +lists/boston-pm                -- is:new and to:Boston-pm@mail.pm.org
+  notmuch tag +lists +lists/LINGUIST-L               -- is:new and list:linguist.listserv.linguistlist.org
+  notmuch tag +lists +lists/CONLANG-L                -- is:new and to:CONLANG@listserv.brown.edu
+  notmuch tag +lists +lists/LCS-members              -- is:new and to:members@lists.conlang.org
+  notmuch tag +lists +lists/EFFector        -to-me   -- is:new and from:editor@eff.org
+  notmuch tag +lists +lists/SIL-font-news            -- is:new and to:sil-font-news@groups.sil.org
+  notmuch tag +lists +lists/bulletproof-tls -to-me   -- is:new and from:newsletter@feistyduck.com
+  notmuch tag +lists +lists/xrds-acm                 -- is:new and to:XRDS-NEWSLETTER@listserv.acm.org
+  notmuch tag +lists +lists/technews-acm    -to-me   -- is:new and from:technews@hq.acm.organization
+  notmuch tag +lists +lists/debian-security-announce -- is:new and to:debian-security-announce@lists.debian.org
+  notmuch tag +lists +lists/info-fsf        -to-me   -- is:new and from:info@fsf.org
+  notmuch tag +lists +lists/info-gnu                 -- is:new and from:info-gnu-request@gnu.org
+  notmuch tag +lists +lists/perl-qa                  -- is:new and to:perl-qa@perl.org
+  notmuch tag +lists +lists/c++embedded    +c++      -- is:new and to:embedded@open-std.org
+  notmuch tag +lists +lists/cxx-abi-dev    +c++      -- is:new and to:cxx-abi-dev@codesourcery.com
+  notmuch tag +lists +lists/std-discussion +c++      -- is:new and to:std-discussion@isocpp.org
+  notmuch tag +lists +lists/std-proposals  +c++      -- is:new and to:std-proposals@isocpp.org
+  notmuch tag +lists +lists/sg2-modules    +c++      -- is:new and to:modules@isocpp.org
+  notmuch tag +lists +lists/sg5-tm         +c++      -- is:new and to:tm@isocpp.org
+  notmuch tag +lists +lists/sg7-reflection +c++      -- is:new and to:reflection@isocpp.org
+  notmuch tag +lists +lists/sg8-concepts   +c++      -- is:new and to:concepts@isocpp.org
+  notmuch tag +lists +lists/sg9-ranges     +c++      -- is:new and to:ranges@open-std.org
+  notmuch tag +lists +lists/sg10-features  +c++      -- is:new and to:features@open-std.org
+  notmuch tag +lists +lists/sg12-ub        +c++      -- is:new and to:ub@open-std.org
+  notmuch tag +lists +lists/sg13-hmi       +c++      -- is:new and to:sg13@isocpp.org
+  notmuch tag +lists +lists/MIT-daily      -to-me    -- is:new and list:80f62adc67c5889c8cf03eb72.174773.list-id.mcsv.net
+  notmuch tag +lists +lists/MITAC          -to-me    -- is:new and list:7dfb17e8237543c1b898119e1.250537.list-id.mcsv.net
+  notmuch tag +lists +lists/GSC-anno       -to-me    -- is:new and list:cdee009ad27356d631e8ca5b8.380005.list-id.mcsv.net
+  notmuch tag +lists +lists/LSA            -to-me    -- is:new and list:001f7eb7302f6add98bff7e46.216539.list-id.mcsv.net
+  notmuch tag +lists +lists/emacs-humanities -to-me  -- is:new and to:emacs-humanities@gnu.org
 
-      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:awesome-cornell@noreply.github.com
-      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:CornellCSWiki@noreply.github.com
-      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource-owner@freeculture.org
-      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource@freeculture.org
-      notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:open-source-cornell-l@cornell.edu
+  notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:awesome-cornell@noreply.github.com
+  notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:CornellCSWiki@noreply.github.com
+  notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource-owner@freeculture.org
+  notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:cornell-opensource@freeculture.org
+  notmuch tag +OpenSourceCornell +cornell/cs -- is:new and to:open-source-cornell-l@cornell.edu
 
-      notmuch tag +cornell/cs -- is:new and to:ACSU-L@cornell.edu
-      notmuch tag +cornell/cs -- is:new and to:CS-MAJORS-L@list.cornell.edu
+  notmuch tag +cornell/cs -- is:new and to:ACSU-L@cornell.edu
+  notmuch tag +cornell/cs -- is:new and to:CS-MAJORS-L@list.cornell.edu
 
-      notmuch tag +cornell/linguistics +underlings -- is:new and to:UNDERLINGS-L@list.cornell.edu
-      notmuch tag +cornell/linguistics +underlings -- is:new and subject:"underlings-l subscription report"
-      notmuch tag +cornell/linguistics +underlings -- is:new and to:culinguisticscolloquium@gmail.com
-      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-INTEREST-L@list.cornell.edu
-      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-UNDERGRAD-L@list.cornell.edu
-      notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-TALKS-L@list.cornell.edu
-      notmuch tag +cornell/linguistics             -- is:new and to:PSC-LEP-L@list.cornell.edu
+  notmuch tag +cornell/linguistics +underlings -- is:new and to:UNDERLINGS-L@list.cornell.edu
+  notmuch tag +cornell/linguistics +underlings -- is:new and subject:"underlings-l subscription report"
+  notmuch tag +cornell/linguistics +underlings -- is:new and to:culinguisticscolloquium@gmail.com
+  notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-INTEREST-L@list.cornell.edu
+  notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-UNDERGRAD-L@list.cornell.edu
+  notmuch tag +cornell/linguistics             -- is:new and to:LINGDEPT-TALKS-L@list.cornell.edu
+  notmuch tag +cornell/linguistics             -- is:new and to:PSC-LEP-L@list.cornell.edu
 
-      notmuch tag +employment -to-me               -- is:new and from:linkedin.com
+  notmuch tag +employment -to-me               -- is:new and from:linkedin.com
 
-      notmuch tag +twitch -to-me -new              -- is:new and from:twitch.tv
+  notmuch tag +twitch -to-me -new              -- is:new and from:twitch.tv
 
-      notmuch tag +debianchania -- is:new and to:debianchania@googlegroups.com
+  notmuch tag +debianchania -- is:new and to:debianchania@googlegroups.com
 
-      notmuch tag +test-anything-protocol -- is:new and to:Specification@noreply.github.com
+  notmuch tag +test-anything-protocol -- is:new and to:Specification@noreply.github.com
 
-      notmuch tag +deleted -- is:new and path:personal/Trash/**
-      notmuch tag +deleted -- is:new and path:gmail/Trash/**
-      notmuch tag +deleted -- is:new and path:cornell/Trash/**
-      notmuch tag +deleted -- is:new and path:culc/Trash/**
-      notmuch tag +deleted -- is:new and path:mit/Deleted\ Items/**
+  notmuch tag +deleted -- is:new and path:personal/Trash/**
+  notmuch tag +deleted -- is:new and path:gmail/Trash/**
+  notmuch tag +deleted -- is:new and path:cornell/Trash/**
+  notmuch tag +deleted -- is:new and path:culc/Trash/**
+  notmuch tag +deleted -- is:new and path:mit/Deleted\ Items/**
 
-      notmuch tag +spam -- is:new and path:personal/Junk/**
-      notmuch tag +spam -- is:new and path:gmail/Junk/**
-      notmuch tag +spam -- is:new and path:cornell/Junk/**
-      notmuch tag +spam -- is:new and path:culc/Junk/**
-      notmuch tag +spam -- is:new and path:mit/Junk\ E-Mail/**
-      notmuch tag +spam -- from:ss@sciencepg.com
-      notmuch tag +spam -- to:patrick@pniedzielski.net and isabel_hardy@renesteens.nl
-      notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pmstarpromotions.com
-      notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pnkgroup.net
-      notmuch tag +spam -- from:asiaz@rivergroups.com
-      notmuch tag +spam -- from:"Jessica Lee"
-      notmuch tag +spam -- from:jessica@hirahong-kongtailors.net
-      notmuch tag +spam -- from:jessica@hirastravelling-tailor.net
-      notmuch tag +spam -- from:jessica@hiras-customsuitmaker.com
-      notmuch tag +spam -- from:jessica@hiras-thehktailor.net
-      notmuch tag +spam -- from:jessica@hirayourbest-tailor.net
-      notmuch tag +spam -- from:jessica@hiras-yourtailor.com
-      notmuch tag +spam -- from:jessica@hirahk-suitmakers.net
-      notmuch tag +spam -- from:@hira
-      #notmuch tag +spam -- from:"Asia from"
-      notmuch tag +spam -- from:prep@review.com
-      notmuch tag +spam -- from:schoolandnewsinfo@review-schools.com
-      notmuch tag +spam -- from:gutterprotectiondeals_advertisement@pointseducation.com
-      notmuch tag +spam -- from:us-concealed-online@instrumenteducation.com
-      notmuch tag +spam -- from:credit_score_ok@traininghonour.com
-      notmuch tag +spam -- from:mrmartin@houstonpressrelease.com
-      notmuch tag +spam -- from:goldalliedtrust.com@lifesfinancials.com
-      notmuch tag +spam -- from:kn95-mask-special@marvellian.com
-      notmuch tag +spam -- from:canvas-prints-discount@lrsionline.net
-      notmuch tag +spam -- from:canvas.prints.discount@noomstudios.com
-      notmuch tag +spam -- from:healthinsurancenet-offer@alliancenote.com
-      notmuch tag +spam -- from:health_insurance_net@thebestbargainshopping.com
-      notmuch tag +spam -- from:the-choice-home-warranty@mswbn.com
-      notmuch tag +spam -- from:us.concealed.online@stimevents.com
-      notmuch tag +spam -- from:leaffilter_promotion@basicsofbuying.com
+  notmuch tag +spam -- is:new and path:personal/Junk/**
+  notmuch tag +spam -- is:new and path:gmail/Junk/**
+  notmuch tag +spam -- is:new and path:cornell/Junk/**
+  notmuch tag +spam -- is:new and path:culc/Junk/**
+  notmuch tag +spam -- is:new and path:mit/Junk\ E-Mail/**
+  notmuch tag +spam -- from:ss@sciencepg.com
+  notmuch tag +spam -- to:patrick@pniedzielski.net and isabel_hardy@renesteens.nl
+  notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pmstarpromotions.com
+  notmuch tag +spam -- to:patrick@pniedzielski.net and patrick@pnkgroup.net
+  notmuch tag +spam -- from:asiaz@rivergroups.com
+  notmuch tag +spam -- from:"Jessica Lee"
+  notmuch tag +spam -- from:jessica@hirahong-kongtailors.net
+  notmuch tag +spam -- from:jessica@hirastravelling-tailor.net
+  notmuch tag +spam -- from:jessica@hiras-customsuitmaker.com
+  notmuch tag +spam -- from:jessica@hiras-thehktailor.net
+  notmuch tag +spam -- from:jessica@hirayourbest-tailor.net
+  notmuch tag +spam -- from:jessica@hiras-yourtailor.com
+  notmuch tag +spam -- from:jessica@hirahk-suitmakers.net
+  notmuch tag +spam -- from:@hira
+  #notmuch tag +spam -- from:"Asia from"
+  notmuch tag +spam -- from:prep@review.com
+  notmuch tag +spam -- from:schoolandnewsinfo@review-schools.com
+  notmuch tag +spam -- from:gutterprotectiondeals_advertisement@pointseducation.com
+  notmuch tag +spam -- from:us-concealed-online@instrumenteducation.com
+  notmuch tag +spam -- from:credit_score_ok@traininghonour.com
+  notmuch tag +spam -- from:mrmartin@houstonpressrelease.com
+  notmuch tag +spam -- from:goldalliedtrust.com@lifesfinancials.com
+  notmuch tag +spam -- from:kn95-mask-special@marvellian.com
+  notmuch tag +spam -- from:canvas-prints-discount@lrsionline.net
+  notmuch tag +spam -- from:canvas.prints.discount@noomstudios.com
+  notmuch tag +spam -- from:healthinsurancenet-offer@alliancenote.com
+  notmuch tag +spam -- from:health_insurance_net@thebestbargainshopping.com
+  notmuch tag +spam -- from:the-choice-home-warranty@mswbn.com
+  notmuch tag +spam -- from:us.concealed.online@stimevents.com
+  notmuch tag +spam -- from:leaffilter_promotion@basicsofbuying.com
 
-      notmuch tag +draft -- is:new and path:personal/Draft/**
-      notmuch tag +draft -- is:new and path:gmail/Draft/**
-      notmuch tag +draft -- is:new and path:cornell/Draft/**
-      notmuch tag +draft -- is:new and path:culc/Draft/**
-      notmuch tag +draft -- is:new and path:mit/Drafts/**
+  notmuch tag +draft -- is:new and path:personal/Draft/**
+  notmuch tag +draft -- is:new and path:gmail/Draft/**
+  notmuch tag +draft -- is:new and path:cornell/Draft/**
+  notmuch tag +draft -- is:new and path:culc/Draft/**
+  notmuch tag +draft -- is:new and path:mit/Drafts/**
 
-      notmuch tag +inbox -- is:new and is:to-me and is:sent
+  notmuch tag +inbox -- is:new and is:to-me and is:sent
 
-      notmuch tag -new -- is:feeds
-      notmuch tag -new -- is:lists
-      notmuch tag -new -- is:deleted
-      notmuch tag -new -- is:spam
-      notmuch tag -new -- is:sent
-      notmuch tag -new -- is:draft
+  notmuch tag -new -- is:feeds
+  notmuch tag -new -- is:lists
+  notmuch tag -new -- is:deleted
+  notmuch tag -new -- is:spam
+  notmuch tag -new -- is:sent
+  notmuch tag -new -- is:draft
 
-      notmuch tag +spam -- from:denicecassaro@cornell.edu
+  notmuch tag +spam -- from:denicecassaro@cornell.edu
 
-      notmuch tag +inbox -new -- is:new
-    #+end_src
+  notmuch tag +inbox -new -- is:new
+#+end_src
 
-    Now that notmuch is configured to synchronize our local mail with our remote
-    accounts and to tag our mail, we want this to happen in the background.  We
-    can accomplish this using systemd timers.
+Now that notmuch is configured to synchronize our local mail with our remote
+accounts and to tag our mail, we want this to happen in the background.  We can
+accomplish this using systemd timers.
 
-    First, we need to set up a systemd user unit that, when started, runs
-    ~notmuch new~:
+First, we need to set up a systemd user unit that, when started, runs ~notmuch
+new~:
 
-    #+caption: Source listing for ~.config/systemd/user/mail-sync.service~.
-    #+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.service   :noweb yes
-      [Unit]
-      Description=Synchronize local mail with remote accounts
-      RefuseManualStart=no
-      RefuseManualStop=no
+#+caption: Source listing for ~.config/systemd/user/mail-sync.service~.
+#+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.service   :noweb yes
+  [Unit]
+  Description=Synchronize local mail with remote accounts
+  RefuseManualStart=no
+  RefuseManualStop=no
 
-      [Service]
-      Type=oneshot
-      ExecStart=notmuch new
-    #+end_src
+  [Service]
+  Type=oneshot
+  ExecStart=notmuch new
+#+end_src
 
-    Now, we want to run this unit on a timer.  Let’s choose once every five
-    minutes:
+Now, we want to run this unit on a timer.  Let’s choose once every five minutes:
 
-    #+caption: Source listing for ~.config/systemd/user/mail-sync.timer~.
-    #+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.timer   :noweb yes
-      [Unit]
-      Description=Synchronize local mail with remote accounts at regular intervals
-      RefuseManualStart=no
-      RefuseManualStop=no
+#+caption: Source listing for ~.config/systemd/user/mail-sync.timer~.
+#+begin_src conf   :tangle mail/.config/systemd/user/mail-sync.timer   :noweb yes
+  [Unit]
+  Description=Synchronize local mail with remote accounts at regular intervals
+  RefuseManualStart=no
+  RefuseManualStop=no
 
-      [Timer]
-      Persistent=false
-      OnBootSec=2min
-      OnUnitActiveSec=5min
-      Unit=mail-sync.service
+  [Timer]
+  Persistent=false
+  OnBootSec=2min
+  OnUnitActiveSec=5min
+  Unit=mail-sync.service
 
-      [Install]
-      WantedBy=default.target
-    #+end_src
+  [Install]
+  WantedBy=default.target
+#+end_src
 
-    Finally, let’s enable both the timer:
+Finally, let’s enable both the timer:
 
-    #+begin_src sh
-      systemd --user enable mail-sync.timer
-    #+end_src
+#+begin_src sh
+  systemd --user enable mail-sync.timer
+#+end_src
 
 ** Accounts
 *** Personal
-    This is the self-hosted email that I use for most things.
+This is the self-hosted email that I use for most things.
 
-    - Address: =patrick@pniedzielski.net=
-    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
-    - SMTP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
-      on message submission port (587).
+  - Address: =patrick@pniedzielski.net=
+  - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
+  - SMTP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
+    on message submission port (587).
 
-    First, make a directory in the Maildir hierarchy for emails from this
-    account.
+First, make a directory in the Maildir hierarchy for emails from this account.
 
-    #+begin_src sh
-      mkdir -p ~/Retpoŝtoj/personal/{cur,new,tmp}
-    #+end_src
+#+begin_src sh
+  mkdir -p ~/Retpoŝtoj/personal/{cur,new,tmp}
+#+end_src
 
 **** Isync
-     #+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
+  ###############################################################################
 
 
-       IMAPAccount              personal
-       Host                     tocharian.pniedzielski.net
-       User                     pniedzielski
-       PassCmd                  "pass mail/personal"
-       SSLType                  imaps
-       SSLVersions              TLSv1.2
+  IMAPAccount              personal
+  Host                     tocharian.pniedzielski.net
+  User                     pniedzielski
+  PassCmd                  "pass mail/personal"
+  SSLType                  imaps
+  SSLVersions              TLSv1.2
 
-       IMAPStore                personal-remote
-       Account                  personal
+  IMAPStore                personal-remote
+  Account                  personal
 
-       MaildirStore             personal-local
-       Path                     ~/Retpoŝtoj/personal/
-       Inbox                    ~/Retpoŝtoj/personal/Inbox
-       SubFolders               Legacy
+  MaildirStore             personal-local
+  Path                     ~/Retpoŝtoj/personal/
+  Inbox                    ~/Retpoŝtoj/personal/Inbox
+  SubFolders               Legacy
 
-       Channel                  personal
-       Master                   :personal-remote:
-       Slave                    :personal-local:
-       Patterns                 * !Archive*
-       Create                   Both
-       CopyArrivalDate          yes
-       SyncState                *
-     #+end_src
+  Channel                  personal
+  Master                   :personal-remote:
+  Slave                    :personal-local:
+  Patterns                 * !Archive*
+  Create                   Both
+  CopyArrivalDate          yes
+  SyncState                *
+#+end_src
 
 **** Msmtp
-     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                 PERSONAL EMAIL (tocharian.pniedzielski.net) #
+  ###############################################################################
 
 
-       account           personal
-       tls_starttls      on
-       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
-       host              tocharian.pniedzielski.net
-       port              587
-       from              patrick@pniedzielski.net
-       user              pniedzielski
-       passwordeval      pass mail/personal
-     #+end_src
+  account           personal
+  tls_starttls      on
+  tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+  host              tocharian.pniedzielski.net
+  port              587
+  from              patrick@pniedzielski.net
+  user              pniedzielski
+  passwordeval      pass mail/personal
+#+end_src
 
 *** MIT
-    This is my university email, which I use for MIT-related/academic work.
-    This account is by far the one that gives me the most trouble.  My
-    university hosts mail on an Exchange server that provides IMAP and SMTP, but
-    only barely.  I’ve tried several different ways of working with this account
-    locally, including directly using their anemic IMAP and SMTP server, or
-    routing the access through [[http://davmail.sourceforge.net/][DavMail]], but right now I’m forwarding all the
-    mail to my personal hosted email server (which works beautifully), and using
-    IMAP from it.  SMTP still goes through the Exchange server, which isn’t
-    ideal, but which works better than the Exchange IMAP does.
+This is my university email, which I use for MIT-related/academic work.  This
+account is by far the one that gives me the most trouble.  My university hosts
+mail on an Exchange server that provides IMAP and SMTP, but only barely.  I’ve
+tried several different ways of working with this account locally, including
+directly using their anemic IMAP and SMTP server, or routing the access through
+[[http://davmail.sourceforge.net/][DavMail]], but right now I’m forwarding all the mail to my personal hosted email
+server (which works beautifully), and using IMAP from it.  SMTP still goes
+through the Exchange server, which isn’t ideal, but which works better than the
+Exchange IMAP does.
 
-    What this looks like on my server is an additional mailbox, =mit=, with its
-    own password and IMAP hierarchy.  IMAP accesses the same address as
-    [[*Personal][Personal]], but uses a different user.  Otherwise, the configuration should be
-    identical.  For SMTP, I use the Exchange SMTP directly.
+What this looks like on my server is an additional mailbox, =mit=, with its own
+password and IMAP hierarchy.  IMAP accesses the same address as [[*Personal][Personal]], but
+uses a different user.  Otherwise, the configuration should be identical.  For
+SMTP, I use the Exchange SMTP directly.
 
-    - Address: =pnski@mit.edu=
-    - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
-    - SMTP: =outgoing.mit.edu=, SMTPS.
+  - Address: =pnski@mit.edu=
+  - IMAP: =tocharian.pniedzielski.net=, STARTTLS with ACME generated certificate
+  - SMTP: =outgoing.mit.edu=, SMTPS.
 
-    First, make a directory in the Maildir hierarchy for emails from this
-    account.
+First, make a directory in the Maildir hierarchy for emails from this account.
 
-    #+begin_src sh
-      mkdir -p ~/Retpoŝtoj/mit/{cur,new,tmp}
-    #+end_src
+#+begin_src sh
+  mkdir -p ~/Retpoŝtoj/mit/{cur,new,tmp}
+#+end_src
 
 **** Isync
-     #+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                      MIT EMAIL (tocharian.pniedzielski.net) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-isync  :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                      MIT EMAIL (tocharian.pniedzielski.net) #
+  ###############################################################################
 
 
-       IMAPAccount              mit
-       Host                     tocharian.pniedzielski.net
-       User                     mit
-       PassCmd                  "pass mail/mit"
-       SSLType                  imaps
-       SSLVersions              TLSv1.2
+  IMAPAccount              mit
+  Host                     tocharian.pniedzielski.net
+  User                     mit
+  PassCmd                  "pass mail/mit"
+  SSLType                  imaps
+  SSLVersions              TLSv1.2
 
-       IMAPStore                mit-remote
-       Account                  mit
+  IMAPStore                mit-remote
+  Account                  mit
 
-       MaildirStore             mit-local
-       Path                     ~/Retpoŝtoj/mit/
-       Inbox                    ~/Retpoŝtoj/mit/Inbox
-       SubFolders               Legacy
+  MaildirStore             mit-local
+  Path                     ~/Retpoŝtoj/mit/
+  Inbox                    ~/Retpoŝtoj/mit/Inbox
+  SubFolders               Legacy
 
-       Channel                  mit
-       Master                   :mit-remote:
-       Slave                    :mit-local:
-       Patterns                 * !Archive*
-       Create                   Both
-       CopyArrivalDate          yes
-       SyncState                *
+  Channel                  mit
+  Master                   :mit-remote:
+  Slave                    :mit-local:
+  Patterns                 * !Archive*
+  Create                   Both
+  CopyArrivalDate          yes
+  SyncState                *
 
-       Channel                  mit-archive
-       Master                   :mit-remote:
-       Slave                    :mit-local:
-       Patterns                 Archive*
-       Create                   Both
-       CopyArrivalDate          yes
-       SyncState                *
-     #+end_src
+  Channel                  mit-archive
+  Master                   :mit-remote:
+  Slave                    :mit-local:
+  Patterns                 Archive*
+  Create                   Both
+  CopyArrivalDate          yes
+  SyncState                *
+#+end_src
 
 **** Msmtp
-     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                                MIT EMAIL (outgoing.mit.edu) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                                MIT EMAIL (outgoing.mit.edu) #
+  ###############################################################################
 
 
-       account           mit
-       tls_starttls      off
-       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
-       host              outgoing.mit.edu
-       port              465
-       from              pnski@mit.edu
-       user              pnski
-       passwordeval      pass mit/kerberos
-     #+end_src
+  account           mit
+  tls_starttls      off
+  tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+  host              outgoing.mit.edu
+  port              465
+  from              pnski@mit.edu
+  user              pnski
+  passwordeval      pass mit/kerberos
+#+end_src
 
 *** Gmail
-    This is an older email account that I mainly use as an archive and for
-    emails I’ll need for self-hosted services, just in case I cannot access
-    =tocharian.pniedzielski.net=.
+This is an older email account that I mainly use as an archive and for emails
+I’ll need for self-hosted services, just in case I cannot access
+=tocharian.pniedzielski.net=.
 
-    - Address: =PatrickNiedzielski@gmail.com=
-    - IMAP: =imap.gmail.com=, IMAPS.
-    - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
+  - Address: =PatrickNiedzielski@gmail.com=
+  - IMAP: =imap.gmail.com=, IMAPS.
+  - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
 
-    First, make a directory in the Maildir hierarchy for emails from this
-    account.
+First, make a directory in the Maildir hierarchy for emails from this account.
 
-    #+begin_src sh
-      mkdir -p ~/Retpoŝtoj/gmail
-    #+end_src
+#+begin_src sh
+  mkdir -p ~/Retpoŝtoj/gmail
+#+end_src
 
 **** Lieer
 
 **** Msmtp
-     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                                      GMAIL (imap.gmail.com) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                                      GMAIL (imap.gmail.com) #
+  ###############################################################################
 
 
-       account           gmail
-       tls_starttls      on
-       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
-       host              smtp.gmail.com
-       port              587
-       from              PatrickNiedzielski@gmail.com
-       user              PatrickNiedzielski@gmail.com
-       passwordeval      pass mail/gmail
-     #+end_src
+  account           gmail
+  tls_starttls      on
+  tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+  host              smtp.gmail.com
+  port              587
+  from              PatrickNiedzielski@gmail.com
+  user              PatrickNiedzielski@gmail.com
+  passwordeval      pass mail/gmail
+#+end_src
 
 *** Cornell
-    This is the university email that I use for Cornell-related work.  This
-    account is hosted by Gmail.
+This is the university email that I use for Cornell-related work.  This account
+is hosted by Gmail.
 
-    - Address: =pmn25@cornell.edu=
-    - IMAP: =imap.gmail.com=, IMAPS.
-    - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
+  - Address: =pmn25@cornell.edu=
+  - IMAP: =imap.gmail.com=, IMAPS.
+  - SMTP: =smtp.gmail.com=, STARTTLS on message submission port (587).
 
-    First, make a directory in the Maildir hierarchy for emails from this
-    account.
+First, make a directory in the Maildir hierarchy for emails from this account.
 
-    #+begin_src sh
-      mkdir -p ~/Retpoŝtoj/cornell/{cur,new,tmp}
-    #+end_src
+#+begin_src sh
+  mkdir -p ~/Retpoŝtoj/cornell/{cur,new,tmp}
+#+end_src
 
 **** Lieer
 
 **** Msmtp
-     #+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
-       ###############################################################################
-       #                                              CORNELL EMAIL (imap.gmail.com) #
-       ###############################################################################
+#+begin_src conf  :noweb-ref mail-msmtp   :noweb-sep "\n\n\n"
+  ###############################################################################
+  #                                              CORNELL EMAIL (imap.gmail.com) #
+  ###############################################################################
 
 
-       account           cornell
-       tls_starttls      on
-       tls_trust_file    /etc/ssl/certs/ca-certificates.crt
-       host              smtp.gmail.com
-       port              587
-       from              pmn25@cornell.edu
-       user              pmn25@cornell.edu
-       passwordeval      pass mail/gmail
-     #+end_src
+  account           cornell
+  tls_starttls      on
+  tls_trust_file    /etc/ssl/certs/ca-certificates.crt
+  host              smtp.gmail.com
+  port              587
+  from              pmn25@cornell.edu
+  user              pmn25@cornell.edu
+  passwordeval      pass mail/gmail
+#+end_src
 
 * Git
 
 * X11
 ** Fcitx
 
-   I use [[https://fcitx-im.org/][Fcitx]] as an input method to allow me to type non-Latin characters.  To
-   set this up, we have to export several environment variables:
+I use [[https://fcitx-im.org/][Fcitx]] as an input method to allow me to type non-Latin characters.  To set
+this up, we have to export several environment variables:
 
-   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
-     # Set up FCITX.
-   #+END_SRC
-   #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
-     export XIM_PROGRAM=fcitx
-     export XIM=fcitx
-     export GTK_IM_MODULE=fcitx
-     export QT_IM_MODULE=fcitx
-     export XMODIFIERS="@im=fcitx"
-   #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
+  # Set up FCITX.
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+  export XIM_PROGRAM=fcitx
+  export XIM=fcitx
+  export GTK_IM_MODULE=fcitx
+  export QT_IM_MODULE=fcitx
+  export XMODIFIERS="@im=fcitx"
+#+END_SRC
 
 * Backups
 
 * Emacs
 
-  Now, so we can easily connect to the Emacs server from an interactive
-  terminal, we define some shorthand shell aliases.  I can never remember the
-  command-line arguments to ~emacsclient~, and ~emacsclient~ itself is a pretty
-  hefty command name, so these aliases find a lot of use.  ~em~ opens its
-  argument in an existing frame, ~emnew~ opens its argument in a new frame, and
-  ~emtty~ opens its argument in the current terminal.
+Now, so we can easily connect to the Emacs server from an interactive terminal,
+we define some shorthand shell aliases.  I can never remember the command-line
+arguments to ~emacsclient~, and ~emacsclient~ itself is a pretty hefty command
+name, so these aliases find a lot of use.  ~em~ opens its argument in an
+existing frame, ~emnew~ opens its argument in a new frame, and ~emtty~ opens its
+argument in the current terminal.
 
-  #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
-    # Emacsclient aliases
-  #+END_SRC
-  #+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
-    alias em="emacsclient -n $@"
-    alias emnew="emacsclient -c -n $@"
-    alias emtty="emacsclient -t $@"
-  #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n"   :exports none
+  # Emacsclient aliases
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-alias   :noweb-sep "\n\n"
+  alias em="emacsclient -n $@"
+  alias emnew="emacsclient -c -n $@"
+  alias emtty="emacsclient -t $@"
+#+END_SRC
 
-  For each of these aliases, I used to have the ~--alternative-editor~ flag,
-  which I could use to set an editor to select if Emacs was not running.  There
-  is no case when that happens, and if there’s some problem where Emacs is not
-  running, I’d like to be warned so I use ~vi~ explicitly and not get confused.
+For each of these aliases, I used to have the ~--alternative-editor~ flag, which
+I could use to set an editor to select if Emacs was not running.  There is no
+case when that happens, and if there’s some problem where Emacs is not running,
+I’d like to be warned so I use ~vi~ explicitly and not get confused.
 
-  Finally, we set Emacs as our default editor for the session.  We want the
-  behavior to be "open a new buffer for the existing Emacs session.  If that
-  session does not exist, open Emacs in daemon mode and then open a terminal
-  frame connection to it."  Setting ~$VISUAL~ and ~$EDITOR~ to ~emacsclient~
-  accomplishes the first part, and setting ~$ALTERNATIVE_EDITOR~ to an empty
-  string accomplishes the second part, as described in the article [[http://stuff-things.net/2014/12/16/working-with-emacsclient/][_Working with
-  EmacsClient_]].
+Finally, we set Emacs as our default editor for the session.  We want the
+behavior to be "open a new buffer for the existing Emacs session.  If that
+session does not exist, open Emacs in daemon mode and then open a terminal frame
+connection to it."  Setting ~$VISUAL~ and ~$EDITOR~ to ~emacsclient~
+accomplishes the first part, and setting ~$ALTERNATIVE_EDITOR~ to an empty
+string accomplishes the second part, as described in the article [[http://stuff-things.net/2014/12/16/working-with-emacsclient/][_Working with
+EmacsClient_]].
 
-  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
-    # Use emacsclient as the editor.
-  #+END_SRC
-  #+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
-    export EDITOR="emacsclient"
-    export VISUAL="emacsclient"
-    export ALTERNATIVE_EDITOR=""
-  #+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n"   :exports none
+  # Use emacsclient as the editor.
+#+END_SRC
+#+BEGIN_SRC sh   :noweb-ref sh-env   :noweb-sep "\n\n"
+  export EDITOR="emacsclient"
+  export VISUAL="emacsclient"
+  export ALTERNATIVE_EDITOR=""
+#+END_SRC
 
 ** TODO Mention separate Emacs config file
 
