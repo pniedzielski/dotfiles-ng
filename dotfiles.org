@@ -373,6 +373,24 @@ these, we set environment variables to force them to use Wayland.
   MOZ_ENABLE_WAYLAND=1
 #+END_SRC
 
+** Source in Shell
+
+Unfortunately, this is not enough.  When starting a Wayland session, with GNOME,
+on Debian, the ~PATH~ environment variable setting in ~environment.d~ is
+overwritten by a static string (see [[https://github.com/systemd/systemd/issues/6414][this bug]]; no one wants to claim it as their
+own fault…).  We’ll need to fix this by reloading the environment in our
+~.profile~ configuration, unfortunately.  The way I do this is taken from [[https://github.com/systemd/systemd/issues/7641#issuecomment-693117066][this
+answer]], which gives a solution that doesn’t rely on Bash-isms, and thus should
+work well as a real ~.profile~.
+
+#+begin_src sh   :noweb-ref sh-profile   :noweb-sep "\n"
+  set -a
+  . /dev/fd/0 <<EOF
+  $(/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator)
+  EOF
+  set +a
+#+end_src
+
 * Shell
 
 The UNIX shell is at the center of the UNIX CLI experience, so it makes sense to
