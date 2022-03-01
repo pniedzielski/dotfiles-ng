@@ -86,13 +86,13 @@ incredibly easy, especially compared to how my configuration was before.
 In contrast, my dotfiles have been just that: dotfiles.  For simple
 configurations, anything more is overkill.  Recently, though, I’ve been running
 up against my dotfiles themselves.  For example, to properly configure [[*GnuPG][GPG]], I
-need to make sure that my [[*Shell][shell configuration]], [[*SSH][SSH configuration]], and
-[[*Emacs][Emacs configuration]] are all in sync (not to mention making sure the multiple
-GnuPG 2.1 configuration files aren’t contradictory).  To make it worse, lots of
-things depend on a properly configured GPG, and sometimes in subtle ways.  I
-need to keep all these assumptions in mind when I modify my GPG configuration,
-and that can affect the way I structure my GPG configuration.  In particular, if
-I modify something incorrectly, I may (and have) ended up with a machine that
+need to make sure that my [[*Shell][shell configuration]], [[*Environment][environment configuration]] and
+[[*Emacs][Emacs configuration]] are in sync (not to mention making sure the multiple GnuPG
+2.1 configuration files aren’t contradictory).  To make it worse, lots of things
+depend on a properly configured GPG, and sometimes in subtle ways.  I need to
+keep all these assumptions in mind when I modify my GPG configuration, and that
+can affect the way I structure my GPG configuration.  In particular, if I modify
+something incorrectly, I may (and have) ended up with a machine that
 mysteriously wouldn’t let me log in, or wouldn’t let me encrypt and decrypt
 files.  This is not something I enjoy fixing, especially when I have other, more
 pressing things to be doing.
@@ -908,15 +908,108 @@ already been typed as the prefix for searching through command history.
 #+END_SRC
 
 * GnuPG
+
+PGP is annoying and hard to use properly.  GnuPG is an implementation of PGP
+that is also annoying and hard to use properly.  I do my best to use other
+interfaces that work on top of GnuPG (of which there are many), so I don’t have
+to deal with it as much as possible.
+
+Not only is GnuPG hard to work with, but it’s also hard to configure properly.
+Recent versions of GnuPG have changed things for the better, but in incompatible
+ways.  The following configuration makes everything work out, to the best I can
+tell, but I live in fear that some day something may break without me knowing.
+It’s happened before.
+
+First, we change the configuration directory for GnuPG to one within the XDG
+Base Directories:
+
 #+CAPTION: Source listing for ~.config/environment.d/21-gpg.conf~.
 #+BEGIN_SRC conf   :tangle gnupg/.config/environment.d/21-gpg.conf
    GNUPGHOME=$XDG_CONFIG_HOME/gnupg
 #+end_src
 
-* SSH
+This change seems innocuous.  However, GnuPG automatically generates the socket
+names for its internal ~gpg-agent~ daemon based on this variable.  What this
+means is that the default systemd management for sockets will not work
+correctly, because they assume the old socket names, and don’t read the
+~GNUPGHOME~ variable to generate the correct ones.  So, we need to modify the
+systemd unit files ourselves and correct the socket names.  We do this by
+copying the unit files included in the Debian package to a user directory we
+control and modifying them.  Luckily, [[https://github.com/gpg/gnupg/blob/260bbb4ab27eab0a8d4fb68592b0d1c20d80179c/common/homedir.c#L710-L713][the socket names are built from a hash of
+the ~GNUPGHOME~ directory]], so it’s at least we’re hard coding a constant:
+
+#+CAPTION: Source listing for ~.config/systemd/user/gpg-agent-browser.socket~.
+#+begin_src conf   :tangle gnupg/.config/systemd/user/gpg-agent-browser.socket
+  [Unit]
+  Description=GnuPG cryptographic agent and passphrase cache (access for web browsers)
+  Documentation=man:gpg-agent(1)
+
+  [Socket]
+  ListenStream=%t/gnupg/d.3xhj9kn7wba5eojhjbnkjr3n/S.gpg-agent.browser
+  FileDescriptorName=browser
+  Service=gpg-agent.service
+  SocketMode=0600
+  DirectoryMode=0700
+
+  [Install]
+  WantedBy=sockets.target
+#+end_src
+
+#+CAPTION: Source listing for ~.config/systemd/user/gpg-agent-extra.socket~.
+#+begin_src conf   :tangle gnupg/.config/systemd/user/gpg-agent-extra.socket
+  [Unit]
+  Description=GnuPG cryptographic agent and passphrase cache (restricted)
+  Documentation=man:gpg-agent(1)
+
+  [Socket]
+  ListenStream=%t/gnupg/d.3xhj9kn7wba5eojhjbnkjr3n/S.gpg-agent.extra
+  FileDescriptorName=extra
+  Service=gpg-agent.service
+  SocketMode=0600
+  DirectoryMode=0700
+
+  [Install]
+  WantedBy=sockets.target
+#+end_src
+
+#+CAPTION: Source listing for ~.config/systemd/user/gpg-agent.socket~.
+#+begin_src conf   :tangle gnupg/.config/systemd/user/gpg-agent.socket
+  [Unit]
+  Description=GnuPG cryptographic agent and passphrase cache
+  Documentation=man:gpg-agent(1)
+
+  [Socket]
+  ListenStream=%t/gnupg/d.3xhj9kn7wba5eojhjbnkjr3n/S.gpg-agent
+  FileDescriptorName=std
+  Service=gpg-agent.service
+  SocketMode=0600
+  DirectoryMode=0700
+
+  [Install]
+  WantedBy=sockets.target
+#+end_src
+
+#+CAPTION: Source listing for ~.config/systemd/user/gpg-agent-ssh.socket~.
+#+begin_src conf   :tangle gnupg/.config/systemd/user/gpg-agent-ssh.socket
+  [Unit]
+  Description=GnuPG cryptographic agent (ssh-agent emulation)
+  Documentation=man:gpg-agent(1) man:ssh-add(1) man:ssh-agent(1) man:ssh(1)
+
+  [Socket]
+  ListenStream=%t/gnupg/d.3xhj9kn7wba5eojhjbnkjr3n/S.gpg-agent.ssh
+  FileDescriptorName=ssh
+  Service=gpg-agent.service
+  SocketMode=0600
+  DirectoryMode=0700
+
+  [Install]
+  WantedBy=sockets.target
+#+end_src
+
 #+BEGIN_SRC conf   :tangle ssh/.config/environment.d/20-ssh.conf
-  SSH_AGENT_PID=
-  SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh
+#  SSH_AGENT_PID=
+#  SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
+#  GSM_SKIP_SSH_AGENT_WORKAROUND=true
 #+END_SRC
 
 * Mail
