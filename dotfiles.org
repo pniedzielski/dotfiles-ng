@@ -1498,8 +1498,8 @@ First, make a directory in the Maildir hierarchy for emails from this account.
   SubFolders               Legacy
 
   Channel                  personal
-  Master                   :personal-remote:
-  Slave                    :personal-local:
+  Far                      :personal-remote:
+  Near                     :personal-local:
   Patterns                 * !Archive*
   Create                   Both
   CopyArrivalDate          yes
@@ -1572,16 +1572,16 @@ First, make a directory in the Maildir hierarchy for emails from this account.
   SubFolders               Legacy
 
   Channel                  mit
-  Master                   :mit-remote:
-  Slave                    :mit-local:
+  Far                      :mit-remote:
+  Near                     :mit-local:
   Patterns                 * !Archive*
   Create                   Both
   CopyArrivalDate          yes
   SyncState                *
 
   Channel                  mit-archive
-  Master                   :mit-remote:
-  Slave                    :mit-local:
+  Far                      :mit-remote:
+  Near                     :mit-local:
   Patterns                 Archive*
   Create                   Both
   CopyArrivalDate          yes
