@@ -1674,6 +1674,69 @@ First, make a directory in the Maildir hierarchy for emails from this account.
 
 * Git
 
+* Programming Tools
+** GHCup
+It seems like everything in the Haskell ecosystem is moving towards [[https://www.haskell.org/ghcup/][GHCup]], which
+requires me to download which versions of GHC I want.  I’ve always been a bigger
+fan of either using my system’s package manager or letting the build system
+install the proper sandboxed toolchain for me, like [[*Stack][Stack]] does.  Until now, I
+could ignore GHCup for this reason.  However, recently, the [[https://github.com/haskell/haskell-language-server/releases/tag/1.7.0.0][Haskell Language
+Server]] stopped providing prebuilt binaries that work with Stack’s sandboxed
+compiler.  Now, unless I use GHCup, I have to manually build the Haskell
+Language Server for each compiler I use, negating the benefits of using Stack.
+This means we have to do a little bit extra work coaxing GHCup and Stack to play
+well with one another.  In this section, I deal exclusively with the setup for
+GHCup, and that coaxing happens later on, in the [[*Stack][Stack]] section below
+
+First, we need to download the GHCup binary:
+
+#+begin_src sh
+  curl -Lf "https://downloads.haskell.org/~ghcup/x86_64-linux-ghcup" > ~/.local/bin/ghcup
+  chmod +x ~/.local/bin/ghcup
+#+end_src
+
+Next, we need to convince GHCup to use XDG directories, which it doesn’t do by
+default:
+
+#+begin_src conf   :noweb-ref conf-xdg   :noweb-sep "\n"
+  GHCUP_USE_XDG_DIRS=1
+#+end_src
+
+** Stack
+I use [[https://docs.haskellstack.org/en/stable/README/][Stack]], which is meant to be both a reproducible build system and a package
+manager for Haskell.  It is very nice, and seemed to be the hot thing a while
+ago—especially compared with the alternative, [[https://www.haskell.org/cabal/][Cabal]].  One of the nice things
+about Stack is that it automatically downloads a sandboxed compiler for you, so
+I don’t need to worry about which compilers and versions of base I have
+installed.  Instead, building a project automatically gets me the right version
+of everything.
+
+Until recently, making Stack work with [[*GHCup][GHCup]] was a pain.  As of Stack 2.9.1,
+though, we can make Stack run hooks to install its desired version of GHC.
+First, we need to [[https://docs.haskellstack.org/en/stable/yaml_configuration/#yaml-configuration][set Stack to use the XDG Base Directory specification]] (yet
+another tool that doesn’t default to it…):
+
+#+begin_src conf   :noweb-ref conf-xdg   :noweb-sep "\n"
+  STACK_XDG=1
+#+end_src
+
+Next, we need to [[https://www.haskell.org/ghcup/guide/#strategy-2-stack-hooks-new-recommended][set up a GHC installation hook]] to teach Stack about GHCup.  We
+do this by downloading GHCup-provided hook from their repository, installing it
+into the Stack hooks directory, teaching Stack to prefer to install GHC using
+rather than using any system GHC, and finally teaching Stack’s internal
+installation logic.
+
+#+begin_src sh
+  mkdir -p $XDG_CONFIG_HOME/stack/hooks/
+  curl https://raw.githubusercontent.com/haskell/ghcup-hs/master/scripts/hooks/stack/ghc-install.sh \
+    > $XDG_CONFIG_HOME/stack/hooks/ghc-install.sh
+  chmod +x $XDG_CONFIG_HOME/stack/hooks/ghc-install.sh
+  # hooks are only run when 'system-ghc: false'
+  stack config set system-ghc  false --global
+  # when the hook fails, don’t try the internal logic
+  stack config set install-ghc false --global
+#+end_src
+
 * Backups
 
 * Emacs
