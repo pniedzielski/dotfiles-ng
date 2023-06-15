@@ -368,8 +368,8 @@ need to set for the software to work correctly.
 Unfortunately, some applications don’t automatically support Wayland.  For
 these, we set environment variables to force them to use Wayland.
 
-#+CAPTION: Source listing for ~.config/environment.d/70-wayland.conf~.
-#+BEGIN_SRC conf   :tangle env/.config/environment.d/70-wayland.conf
+#+CAPTION: Source listing for ~.config/environment.d/50-wayland.conf~.
+#+BEGIN_SRC conf   :tangle env/.config/environment.d/50-wayland.conf
   MOZ_ENABLE_WAYLAND=1
 #+END_SRC
 
