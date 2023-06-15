@@ -357,7 +357,7 @@ need to set for the software to work correctly.
   MANPATH=$HOME/.local/share/man:$MANPATH
   CFLAGS=-I$HOME/.local/include $CFLAGS
   CXXFLAGS=-I$HOME/.local/include $CXXFLAGS
-  LDFLAGS=-L$HOME/.local/lib -Wl,-rpath,$HOME/.local/lib $LDFLAGS
+  LDFLAGS=-L$HOME/.local/lib -Wl,-rpath=$HOME/.local/lib $LDFLAGS
   LD_RUNPATH=$HOME/.local/lib:$LD_RUNPATH
   PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH
   ACLOCAL_FLAGS=-I $HOME/.local/share/aclocal/
