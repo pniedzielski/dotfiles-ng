@@ -1674,6 +1674,82 @@ First, make a directory in the Maildir hierarchy for emails from this account.
 
 * Git
 
+Most of my life is in text, and text is naturally amenable to version control.
+Nowadays, the best supported version control is Git.  Git is a distributed
+version control system.
+
+#+caption: Source listing for ~/.config/git/config.
+#+begin_src conf   :tangle git/.config/git/config   :noweb yes
+  <<git-config>>
+#+end_src
+
+** Basic Configuration
+
+First, let’s set some global identity configuration that I use across most of my
+repos:
+
+#+begin_src conf   :noweb-ref git-config   :noweb-sep "\n"   :exports none
+  [user]
+      name = Patrick M. Niedzielski
+      email = patrick@pniedzielski.net
+#+end_src
+
+In addition to simple author metadata, it’s also nice to be able to sign Git
+objects, like commits or tags.  We can do this globally so that verification is
+the default rather than opt-in and provide our GPG key fingerprint as follows:
+
+#+begin_src conf   :noweb-ref git-config   :noweb-sep "\n\n"
+  [user]
+      signingkey = 256E8BBC92AE90BC9A1143DFEF84623AB9CDB518
+
+  [commit]
+      gpgsign = true
+#+end_src
+
+** Global Ignores
+
+Some files are never useful to track, and it’s a lot of work to add these to
+per-repository or per-clone ignores.  Luckily, Git allows us to configure ignore
+patterns in a global ignore file, so those more fine-grained ignores can stay
+focused on project-specific noise.
+
+#+begin_src conf   :noweb-ref git-config   :noweb-sep "\n\n"
+  [core]
+      excludesfile = ~/.config/git/ignore
+#+end_src
+
+In my case, I ignore the transcripts of Emacs’s agent-shell package, which it
+litters around everywhere I start a agent session.
+
+#+CAPTION: Source listing for ~/.config/git/ignore.
+#+BEGIN_SRC conf   :tangle git/.config/git/ignore
+  .agent-shell/
+#+END_SRC
+
+** Fork Workflow: Pull Upstream, Push Fork
+
+For repositories where I contribute through a fork, fetch/pull and push are
+deliberately asymmetric.  I want integration work to follow the canonical remote
+while publication of my branches goes to my fork.  These settings encode that
+policy directly so new branches inherit the same behavior.
+
+#+BEGIN_SRC conf   :noweb-ref git-config   :noweb-sep "\n\n"
+  [remote]
+      pushDefault = origin
+
+  [push]
+      default = current
+
+  [branch]
+      autoSetupMerge = inherit
+      autoSetupRebase = always
+
+  [branch "main"]
+      remote = upstream
+      merge = refs/heads/main
+      pushRemote = origin
+#+END_SRC
+
 * Programming Tools
 ** GHCup
 It seems like everything in the Haskell ecosystem is moving towards [[https://www.haskell.org/ghcup/][GHCup]], which
